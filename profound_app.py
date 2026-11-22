@@ -1083,6 +1083,10 @@ if WIN:
     U32.ClientToScreen.argtypes = [wt.HWND, ctypes.POINTER(POINT)]
     U32.SetWindowPos.argtypes = [wt.HWND, wt.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_uint]
     U32.ShowWindow.argtypes = [wt.HWND, ctypes.c_int]
+    U32.SetWindowRgn.argtypes = [wt.HWND, ctypes.c_void_p, ctypes.c_bool]
+    U32.GetWindowRgn.argtypes = [wt.HWND, ctypes.c_void_p]
+    ctypes.windll.gdi32.GetRgnBox.argtypes = [ctypes.c_void_p, ctypes.POINTER(RECT)]
+    ctypes.windll.gdi32.DeleteObject.argtypes = [ctypes.c_void_p]
     U32.RedrawWindow.argtypes = [wt.HWND, ctypes.c_void_p, ctypes.c_void_p, ctypes.c_uint]
 
 
@@ -1983,60 +1987,83 @@ class PreviewTab(tk.Frame):
             self.msg.configure(text="Couldn't embed the preview here. Use 'Open in browser'.")
             self.proc = None  # allow another try next time the tab is opened
 
+    def _owner(self):
+        return int(self.app.root.wm_frame(), 16)
+
     def _embed(self, h):
+        """Edge becomes a borderless window owned by Profound, kept exactly over the preview area.
+        (A real child window inside Profound never receives the mouse: no scrolling or clicking.)"""
         self.hwnd = h
         try:
-            U32.SetParent(h, self.view.winfo_id())
             style = U32.GetWindowLongPtrW(h, -16)
-            style = (style & ~(0x80000000 | 0x00C00000 | 0x00040000 | 0x00020000 | 0x00010000 | 0x00080000)) | 0x40000000 | 0x10000000
-            U32.SetWindowLongPtrW(h, -16, style)
-            U32.SetWindowPos(h, None, 0, 0, 0, 0, 0x0020 | 0x0002 | 0x0001 | 0x0004)  # FRAMECHANGED|NOMOVE|NOSIZE|NOZORDER
+            style = (style & ~(0x40000000 | 0x00C00000 | 0x00040000 | 0x00020000 | 0x00010000 | 0x00080000)) | 0x80000000
+            U32.SetWindowLongPtrW(h, -16, style)  # WS_POPUP, no caption / sizing frame / system menu
+            ex = U32.GetWindowLongPtrW(h, -20)
+            U32.SetWindowLongPtrW(h, -20, (ex & ~0x00040000) | 0x00000080)  # not an app window; tool window (no taskbar)
+            U32.SetWindowLongPtrW(h, -8, self._owner())  # owned by Profound: stays above it, minimises with it
+            U32.SetWindowPos(h, None, 0, 0, 0, 0, 0x0020 | 0x0002 | 0x0001 | 0x0004 | 0x0010)  # FRAMECHANGED|NOMOVE|NOSIZE|NOZORDER|NOACTIVATE
             self.msg.place_forget()
+            if not getattr(self, "_follow_bound", False):
+                self._follow_bound = True
+                self.app.root.bind("<Configure>", self._follow, add="+")
+                self._keep_clip()
             self._resize()
             self.after(400, self._resize)
             self.after(1500, self._resize)
         except Exception as e:
             log_error(f"embed failed: {e}")
 
+    def _follow(self, e):
+        """Profound was moved or resized: move the preview with it."""
+        if e.widget is self.app.root and self.hwnd:
+            if not getattr(self, "_follow_job", None):
+                self._follow_job = self.after_idle(self._follow_now)
+
+    def _follow_now(self):
+        self._follow_job = None
+        self._resize()
+
+    def _keep_clip(self):
+        """Edge sometimes resets its window shape; put the clip back so its title strip never shows."""
+        if self.hwnd and self._visible():
+            self._resize(only_clip=True)
+        self.after(800, self._keep_clip)
+
+    def _visible(self):
+        try:
+            return (self.app.active is self and self.winfo_ismapped() and self.app.root.state() != "iconic"
+                    and self.view.winfo_width() > 20)
+        except tk.TclError:
+            return False
+
     def park(self):
-        """Hide the tab by moving it off-screen instead of unmapping it: a hidden Edge window stops drawing
-        and comes back grey, a parked one keeps its page."""
+        """Switching away from the Preview tab: hide the Edge window (the page keeps running)."""
         self.pack_forget()
-        if WIN:
-            self.place(x=0, y=0, relwidth=1, relheight=1)
-            self.lower()  # stays where it is, just behind the active tab
+        if WIN and self.hwnd and U32.IsWindow(self.hwnd):
+            U32.ShowWindow(self.hwnd, 0)  # SW_HIDE
 
     def unpark(self):
-        self.place_forget()
-        self.lift()
+        pass
 
     def wake(self):
-        """After being hidden, make the embedded page show and repaint (otherwise it can stay grey)."""
+        """Back on the Preview tab: put the Edge window over the preview area again."""
+        for ms in (10, 120, 500):
+            self.after(ms, self._resize)
+
+    def _resize(self, _=None, nudge=False, only_clip=False):
+        """Place Edge so its page area exactly covers the preview area, clipped to it (its title strip is cut away)."""
         h = self.hwnd
         if not (WIN and h and U32.IsWindow(h)):
             return
-
-        def go(step=0):
-            if not (self.hwnd and U32.IsWindow(self.hwnd)) or not self.winfo_ismapped():
-                return
-            U32.ShowWindow(h, 5)  # SW_SHOW
-            self._resize(nudge=(step == 0))
-            self._resize()
-            U32.RedrawWindow(h, None, None, 0x0001 | 0x0004 | 0x0080 | 0x0100 | 0x0400)  # INVALIDATE|ERASE|ALLCHILDREN|UPDATENOW|FRAME
-            if step == 1:
-                try:
-                    self.app.preview.bump()  # nudge the page itself to redraw (keeps scroll position)
-                except Exception:
-                    pass
-        for i, ms in enumerate((30, 250, 900)):
-            self.after(ms, lambda i=i: go(i))
-
-    def _resize(self, _=None, nudge=False):
-        """Size the window so its page area exactly fills the tab (any leftover frame is clipped away)."""
-        h = self.hwnd
-        if not (h and U32.IsWindow(h)):
+        if not self._visible():
+            if U32.IsWindowVisible(h):
+                U32.ShowWindow(h, 0)
             return
-        W, H = self.view.winfo_width(), self.view.winfo_height()
+        vid = self.view.winfo_id()
+        vr, vp = RECT(), POINT(0, 0)
+        U32.GetClientRect(vid, ctypes.byref(vr))
+        U32.ClientToScreen(vid, ctypes.byref(vp))
+        W, H = vr.right, vr.bottom
         wr, cr, pt = RECT(), RECT(), POINT(0, 0)
         U32.GetWindowRect(h, ctypes.byref(wr))
         U32.GetClientRect(h, ctypes.byref(cr))
@@ -2045,11 +2072,37 @@ class PreviewTab(tk.Frame):
         extra_w = (wr.right - wr.left) - cr.right
         extra_h = (wr.bottom - wr.top) - cr.bottom
         try:
-            dpi = U32.GetDpiForWindow(self.view.winfo_id()) or 96
+            dpi = U32.GetDpiForWindow(vid) or 96
         except AttributeError:
             dpi = 96
-        cap = round(EDGE_TITLE_PX * dpi / 96)  # Edge draws its own title strip inside the window: slide it out of view
-        U32.MoveWindow(h, -offx, -offy - cap, W + extra_w - (1 if nudge else 0), H + extra_h + cap, True)
+        cap = round(EDGE_TITLE_PX * dpi / 96)  # Edge draws its own title strip at the top of the page area
+        if not only_clip:
+            # stack it directly above Profound (not above other apps' windows that cover Profound)
+            owner = self._owner()
+            U32.GetWindow.restype = ctypes.c_void_p
+            U32.GetWindow.argtypes = [wt.HWND, ctypes.c_uint]
+            if U32.GetWindowLongPtrW(owner, -20) & 0x8:  # Profound is "always on top"
+                after = -1  # HWND_TOPMOST
+            else:
+                after = U32.GetWindow(owner, 3) or 0  # GW_HWNDPREV: the window just above Profound (0 = top)
+                if after == h:
+                    after = None
+            flags = 0x0010 | (0x0004 if after is None else 0)  # NOACTIVATE (| NOZORDER when already in place)
+            U32.SetWindowPos(h, after, vp.x - offx, vp.y - offy - cap, W + extra_w, H + extra_h + cap, flags)
+            U32.GetWindowRect(h, ctypes.byref(wr))
+        gdi = ctypes.windll.gdi32
+        gdi.CreateRectRgn.restype = ctypes.c_void_p
+        want = (offx, offy + cap, offx + W, offy + cap + H)
+        cur = gdi.CreateRectRgn(0, 0, 0, 0)
+        box = RECT()
+        if U32.GetWindowRgn(h, ctypes.c_void_p(cur)) not in (0,) and gdi.GetRgnBox(ctypes.c_void_p(cur), ctypes.byref(box)) and \
+                (box.left, box.top, box.right, box.bottom) == want:
+            gdi.DeleteObject(ctypes.c_void_p(cur))
+        else:
+            gdi.DeleteObject(ctypes.c_void_p(cur))
+            U32.SetWindowRgn(h, ctypes.c_void_p(gdi.CreateRectRgn(*want)), True)  # the window owns the region now
+        if not U32.IsWindowVisible(h):
+            U32.ShowWindow(h, 4)  # SW_SHOWNOACTIVATE
 
     def close(self):
         if self.proc and self.proc.poll() is None:
@@ -2192,6 +2245,8 @@ class App:
             self.root.after(1500, lambda: self.qbtest(sys.argv[sys.argv.index("--qbtest") + 1]))
         if "--readmetest" in sys.argv:  # hidden: screenshots for the README
             self.root.after(1500, lambda: self.readmetest(sys.argv[sys.argv.index("--readmetest") + 1]))
+        if "--pvscrolltest" in sys.argv:  # hidden: can the mouse wheel scroll the embedded preview?
+            self.root.after(1500, lambda: self.pvscrolltest(sys.argv[sys.argv.index("--pvscrolltest") + 1]))
         if "--smoketest" in sys.argv:  # hidden: used by the GitHub builds to check the built app starts on each system
             self.root.after(2500, lambda: self.smoketest(sys.argv[sys.argv.index("--smoketest") + 1]))
         if "--styletest" in sys.argv:  # hidden: "make a page" then "now style it" must edit the same file
@@ -4803,6 +4858,165 @@ class App:
                 self.root.after(ms, lambda: (fn(), run(i + 1)))
         run()
 
+    def pvscrolltest(self, out):
+        """Long page in the preview, then a real wheel turn over it and a wheel message sent to Edge; the page reports scrollY."""
+        res = {}
+        rows = "".join(f"<p style='font:24px sans-serif;margin:0;padding:20px'>Row {i}</p>" for i in range(200))
+        page = ("<!doctype html><html><head><title>t</title></head><body>" + rows +
+                "<script>addEventListener('scroll',function(){fetch('/__err',{method:'POST',body:'SCROLL '+Math.round(scrollY)})});"
+                "addEventListener('mousedown',function(){fetch('/__err',{method:'POST',body:'CLICK 1'})});"
+                "</script></body></html>")
+        self.root.geometry("1300x860+60+40")
+        self.root.attributes("-topmost", True)
+        self.show_preview(snippet=page)
+
+        def scrolled():
+            vals = [int(e.split()[1]) for e in self.preview.errors if e.startswith("SCROLL ")]
+            return max(vals) if vals else 0
+
+        def center():
+            pt = POINT(0, 0)
+            U32.ClientToScreen(self.preview_tab.view.winfo_id(), ctypes.byref(pt))
+            cr = RECT()
+            U32.GetClientRect(self.preview_tab.view.winfo_id(), ctypes.byref(cr))
+            return pt.x + cr.right // 2, pt.y + cr.bottom // 2
+
+        def probe():
+            x, y = center()
+            U32.WindowFromPoint.restype = ctypes.c_void_p
+            U32.WindowFromPoint.argtypes = [POINT]
+            h = U32.WindowFromPoint(POINT(x, y))
+            cn = ctypes.create_unicode_buffer(100)
+            U32.GetClassNameW(ctypes.c_void_p(h), cn, 100)
+            res["window_under_mouse"] = cn.value
+            res["is_edge"] = cn.value.startswith("Chrome") or cn.value.startswith("Intermediate")
+
+        def real_wheel():
+            self.preview.errors.clear()
+            x, y = center()
+            old = POINT()
+            U32.GetCursorPos(ctypes.byref(old))
+            U32.SetCursorPos(x, y)
+            for _ in range(4):
+                U32.mouse_event(0x0800, 0, 0, ctypes.c_ulong(-120 & 0xFFFFFFFF).value, 0)  # MOUSEEVENTF_WHEEL, one notch down
+            self.root.after(1500, lambda: (res.update(real_wheel_scrolled_px=scrolled()), U32.SetCursorPos(old.x, old.y)))
+
+        def posted_wheel():
+            self.preview.errors.clear()
+            x, y = center()
+            U32.PostMessageW.argtypes = [wt.HWND, ctypes.c_uint, wt.WPARAM, wt.LPARAM]
+            wp = ((-360 & 0xFFFF) << 16)
+            lp = ((y & 0xFFFF) << 16) | (x & 0xFFFF)
+            U32.PostMessageW(self.preview_tab.hwnd, 0x020A, wp, lp)
+            self.root.after(1500, lambda: res.update(posted_wheel_scrolled_px=scrolled()))
+
+        def dump():
+            out_l = []
+            EnumProc = ctypes.WINFUNCTYPE(ctypes.c_bool, wt.HWND, wt.LPARAM)
+
+            def info(h, depth):
+                cn = ctypes.create_unicode_buffer(100)
+                U32.GetClassNameW(h, cn, 100)
+                st = U32.GetWindowLongPtrW(h, -16) & 0xFFFFFFFF
+                ex = U32.GetWindowLongPtrW(h, -20) & 0xFFFFFFFF
+                r = RECT()
+                U32.GetWindowRect(h, ctypes.byref(r))
+                out_l.append("%s%s style=%08x ex=%08x vis=%d en=%d rect=%s" % ("  " * depth, cn.value, st, ex,
+                             U32.IsWindowVisible(h), U32.IsWindowEnabled(h), (r.left, r.top, r.right, r.bottom)))
+
+            def walk(h, depth):
+                info(h, depth)
+                kids = []
+                cb = EnumProc(lambda c, _: (kids.append(c), True)[1])
+                U32.EnumChildWindows(h, cb, 0)
+                for c in kids:
+                    if U32.GetParent(c) == h:
+                        walk(c, depth + 1)
+            walk(self.preview_tab.view.winfo_id(), 0)
+            res["tree"] = out_l
+            res["center"] = center()
+            x, y = center()
+            lp = ((y & 0xFFFF) << 16) | (x & 0xFFFF)
+            res["edge_nchittest"] = U32.SendMessageW(self.preview_tab.hwnd, 0x84, 0, lp)
+            rg = ctypes.windll.gdi32.CreateRectRgn(0, 0, 0, 0)
+            res["edge_region_type"] = U32.GetWindowRgn(self.preview_tab.hwnd, rg)
+            rb = RECT()
+            ctypes.windll.gdi32.GetRgnBox(rg, ctypes.byref(rb))
+            res["edge_region_box"] = (rb.left, rb.top, rb.right, rb.bottom)
+            vid = self.preview_tab.view.winfo_id()
+            cp = POINT(x, y)
+            U32.ScreenToClient(vid, ctypes.byref(cp))
+            for nm in ("ChildWindowFromPointEx", "RealChildWindowFromPoint", "WindowFromPhysicalPoint"):
+                fn = getattr(U32, nm)
+                fn.restype = ctypes.c_void_p
+            U32.ChildWindowFromPointEx.argtypes = [wt.HWND, POINT, ctypes.c_uint]
+            U32.RealChildWindowFromPoint.argtypes = [wt.HWND, POINT]
+            U32.WindowFromPhysicalPoint.argtypes = [POINT]
+            res["child_from_point_all"] = U32.ChildWindowFromPointEx(vid, cp, 0)
+            res["real_child"] = U32.RealChildWindowFromPoint(vid, cp)
+            res["from_physical"] = U32.WindowFromPhysicalPoint(POINT(x, y))
+            res["edge_hwnd"] = self.preview_tab.hwnd
+            res["view_hwnd"] = vid
+            res["dpi_aware_ctx"] = U32.GetAwarenessFromDpiAwarenessContext(U32.GetThreadDpiAwarenessContext()) if hasattr(U32, "GetThreadDpiAwarenessContext") else None
+
+        def real_click():
+            self.preview.errors.clear()
+            x, y = center()
+            old = POINT()
+            U32.GetCursorPos(ctypes.byref(old))
+            U32.SetCursorPos(x, y)
+            U32.mouse_event(0x0002, 0, 0, 0, 0)
+            U32.mouse_event(0x0004, 0, 0, 0, 0)
+            self.root.after(1500, lambda: (res.update(real_click_reached_page=any(e.startswith("CLICK") for e in self.preview.errors)),
+                                           U32.SetCursorPos(old.x, old.y)))
+
+        def under(x, y):
+            U32.WindowFromPoint.restype = ctypes.c_void_p
+            U32.WindowFromPoint.argtypes = [POINT]
+            hh = U32.WindowFromPoint(POINT(x, y))
+            cn = ctypes.create_unicode_buffer(100)
+            U32.GetClassNameW(ctypes.c_void_p(hh), cn, 100)
+            return cn.value
+
+        def move_window():
+            self.root.attributes("-topmost", False)
+            self.root.geometry("1300x860+260+120")
+
+        def after_move():
+            x, y = center()
+            res["after_move_under_mouse"] = under(x, y)
+
+        def open_dialogs():
+            self.open_settings()
+            self.open_model_menu()
+
+        def check_dialogs():
+            out_d = {}
+            for w in self.root.winfo_children():
+                if isinstance(w, tk.Toplevel) and w.winfo_ismapped():
+                    w.update_idletasks()
+                    cx, cy = w.winfo_rootx() + w.winfo_width() // 2, w.winfo_rooty() + w.winfo_height() // 2
+                    U32.WindowFromPoint.restype = ctypes.c_void_p
+                    U32.WindowFromPoint.argtypes = [POINT]
+                    U32.GetAncestor.restype = ctypes.c_void_p
+                    U32.GetAncestor.argtypes = [ctypes.c_void_p, ctypes.c_uint]
+                    top = U32.GetAncestor(U32.WindowFromPoint(POINT(cx, cy)), 2)
+                    out_d[w.title() or "popup"] = "dialog on top" if top == int(w.wm_frame(), 16) else (
+                        "EDGE ON TOP" if top == self.preview_tab.hwnd else "other: " + str(top))
+            res["dialogs_on_top"] = out_d
+
+        steps = [(9000, probe), (10, dump), (300, real_wheel), (2500, posted_wheel), (2500, real_click),
+                 (2500, move_window), (1200, after_move), (300, open_dialogs), (1500, check_dialogs), (300, lambda: None)]
+
+        def run(i=0):
+            if i < len(steps):
+                ms, fn = steps[i]
+                return self.root.after(ms, lambda: (fn(), run(i + 1)))
+            with open(out, "w", encoding="utf-8") as f:
+                json.dump(res, f, indent=1)
+            self.on_close(force=True)
+        run()
+
     def smoketest(self, out):
         """Opens the main window, the Code tab, the Train library and a restyled page, then writes a JSON report."""
         res = {"ok": False, "platform": sys.platform, "frozen": FROZEN, "python": sys.version.split()[0]}
@@ -4902,7 +5116,9 @@ class App:
         def state():
             pt = self.preview_tab
             h = pt.hwnd
-            ok = bool(WIN and h and U32.IsWindow(h) and U32.GetParent(h) == pt.view.winfo_id())
+            U32.GetWindow.restype = ctypes.c_void_p
+            U32.GetWindow.argtypes = [wt.HWND, ctypes.c_uint]
+            ok = bool(WIN and h and U32.IsWindow(h) and U32.GetWindow(h, 4) == pt._owner())
             return {"embedded": ok, "visible": bool(ok and U32.IsWindowVisible(h)), "front": self.active is pt,
                     "pixel": self.grab_pixel(pt) if ok else None}
 
