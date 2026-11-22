@@ -15,6 +15,12 @@ with no internet connection and no account. It runs entirely on your own compute
 - **Other features.** Saved chats (rename and delete), style presets, a VS Code / VSCodium extension, and a dark green theme.
 - **Platforms.** Windows (main), Linux (including Arch) and macOS.
 
+## Download
+
+Ready-made apps for **Windows, macOS (Apple chip and Intel) and Linux** are on the
+[Releases page](https://github.com/yeeboein/profound/releases). Each one includes the AI engine. Add a model
+(see below) and start Profound. Every version is built and start-tested automatically on all four systems.
+
 ## Requirements
 
 - **RAM:** 4 GB minimum (with a small model); 16 GB recommended for Gemma 4 12B.

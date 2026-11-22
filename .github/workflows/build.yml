@@ -1,0 +1,157 @@
+# Builds Profound for Windows, macOS and Linux, checks each app starts, and (for version tags like v1.0.0)
+# publishes the downloads on the Releases page. Models are not included (too big): see models/README.txt.
+name: Build apps
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  LLAMA_TAG: b12613  # llama.cpp engine version bundled with the app
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+            engine: llama-b12613-bin-win-cpu-x64.zip
+            package: Profound-Windows-x64.zip
+          - name: macOS Apple Silicon
+            os: macos-latest
+            engine: llama-b12613-bin-macos-arm64.tar.gz
+            package: Profound-macOS-AppleSilicon.zip
+          - name: macOS Intel
+            os: macos-15-intel
+            engine: llama-b12613-bin-macos-x64.tar.gz
+            package: Profound-macOS-Intel.zip
+          - name: Linux x64
+            os: ubuntu-22.04
+            engine: llama-b12613-bin-ubuntu-x64.tar.gz
+            package: Profound-Linux-x64.tar.gz
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libtk8.6 xvfb
+
+      - name: Install build tools
+        run: python -m pip install --upgrade pip pyinstaller pillow tkinterdnd2
+
+      - name: Build the app
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then SEP=";"; else SEP=":"; fi
+          DATA=(--add-data "logo.png${SEP}." --add-data "buddy_idle.png${SEP}." --add-data "buddy_talk.png${SEP}."
+                --add-data "icon.ico${SEP}." --add-data "vscode_ext${SEP}vscode_ext"
+                --add-data "training_pack${SEP}training_pack" --add-data "README_LINUX_MAC.md${SEP}."
+                --hidden-import restyle --hidden-import page_builder --hidden-import make_css_pack)
+          case "$RUNNER_OS" in
+            Windows) python -m PyInstaller --noconfirm --onefile --windowed --name Profound --icon icon.ico "${DATA[@]}" profound_app.py ;;
+            macOS)   python -m PyInstaller --noconfirm --onedir --windowed --name Profound --icon logo.png \
+                       --osx-bundle-identifier app.profound.desktop --collect-all tkinterdnd2 "${DATA[@]}" profound_app.py ;;
+            Linux)   python -m PyInstaller --noconfirm --onefile --windowed --name Profound --collect-all tkinterdnd2 "${DATA[@]}" profound_app.py ;;
+          esac
+          mkdir -p out/engine out/models
+          if [ "$RUNNER_OS" = "macOS" ]; then cp -R dist/Profound.app out/; else cp dist/Profound* out/; fi
+          cat > out/models/README.txt <<'EOF'
+          Put one or more AI models (.gguf files) in this folder, then start Profound.
+          Recommended (search the file name on huggingface.co):
+            gemma-4-12B-it-Q4_0.gguf (+ mmproj-gemma-4-12B-it-Q8_0.gguf to see images)   16 GB RAM
+            Ministral-3-3B-Instruct-2512-Q4_K_M.gguf                                       4 GB RAM
+            gemma-4-E2B-it-qat-UD-Q2_K_XL.gguf                                             4 GB RAM
+          EOF
+
+      - name: Add the AI engine (llama.cpp)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/eng" && cd "$RUNNER_TEMP/eng"
+          gh release download "$LLAMA_TAG" -R ggml-org/llama.cpp -p "${{ matrix.engine }}"
+          case "${{ matrix.engine }}" in *.zip) unzip -q ./*.zip ;; *) tar xzf ./*.tar.gz ;; esac
+          SRV=$(find . -type f \( -name llama-server -o -name llama-server.exe \) | head -1)
+          [ -n "$SRV" ] || { echo "llama-server not found in the download"; exit 1; }
+          cp -R "$(dirname "$SRV")"/. "$GITHUB_WORKSPACE/out/engine/"
+          chmod +x "$GITHUB_WORKSPACE"/out/engine/* 2>/dev/null || true
+          ls "$GITHUB_WORKSPACE/out/engine" | head -20
+
+      - name: Check the app starts (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $p = Start-Process out\Profound.exe -ArgumentList "--smoketest", "$PWD\smoke.json" -PassThru
+          if (-not $p.WaitForExit(180000)) { $p.Kill(); throw "The app did not finish its startup check" }
+
+      - name: Check the app starts (macOS)
+        if: runner.os == 'macOS'
+        run: out/Profound.app/Contents/MacOS/Profound --smoketest "$PWD/smoke.json"
+
+      - name: Check the app starts (Linux)
+        if: runner.os == 'Linux'
+        run: timeout 180 xvfb-run -a out/Profound --smoketest "$PWD/smoke.json"
+
+      - name: Startup check result
+        run: |
+          cat smoke.json
+          python -c "import json,sys; r=json.load(open('smoke.json')); sys.exit(0 if r.get('ok') else 1)"
+
+      - name: Package
+        run: |
+          mv out Profound
+          case "${{ matrix.package }}" in
+            *.tar.gz) tar czf "${{ matrix.package }}" Profound ;;
+            *) if [ "$RUNNER_OS" = "macOS" ]; then ditto -c -k --keepParent Profound "${{ matrix.package }}";
+               else pwsh -Command "Compress-Archive -Path Profound -DestinationPath '${{ matrix.package }}'"; fi ;;
+          esac
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.package }}
+          path: ${{ matrix.package }}
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          body: |
+            ## Downloads
+            | System | File |
+            |---|---|
+            | Windows 10/11 | Profound-Windows-x64.zip |
+            | Mac with Apple chip (M1 and newer) | Profound-macOS-AppleSilicon.zip |
+            | Mac with Intel chip | Profound-macOS-Intel.zip |
+            | Linux (Arch, Ubuntu...) | Profound-Linux-x64.tar.gz |
+
+            **Then add an AI model:** put a `.gguf` model in the `models` folder (see `models/README.txt` inside).
+
+            **Mac:** the app isn't signed by Apple yet, so the first time, open Terminal and run
+            `xattr -dr com.apple.quarantine ~/Downloads/Profound` (use the folder where you unzipped it),
+            then open Profound.app.
+
+            **Linux:** needs Tk (`sudo pacman -S tk` on Arch, `sudo apt install libtk8.6` on Ubuntu). Run `./Profound`.

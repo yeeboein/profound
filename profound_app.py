@@ -2190,6 +2190,8 @@ class App:
                 self.root.after(1500, (lambda o=out: self.codetest(o)) if flag == "--codetest" else (lambda o=out: self.previewtest(o)))
         if "--qbtest" in sys.argv:  # hidden: runs a Quick build on the smallest model and checks the page
             self.root.after(1500, lambda: self.qbtest(sys.argv[sys.argv.index("--qbtest") + 1]))
+        if "--smoketest" in sys.argv:  # hidden: used by the GitHub builds to check the built app starts on each system
+            self.root.after(2500, lambda: self.smoketest(sys.argv[sys.argv.index("--smoketest") + 1]))
         if "--styletest" in sys.argv:  # hidden: "make a page" then "now style it" must edit the same file
             self.root.after(1500, lambda: self.styletest(sys.argv[sys.argv.index("--styletest") + 1]))
         if "--demo-qb" in sys.argv:  # hidden: screenshot the Quick build picker
@@ -4719,6 +4721,30 @@ class App:
                 pass
             self.on_close(force=True)
         self.root.after(500, wait)
+
+    def smoketest(self, out):
+        """Opens the main window, the Code tab, the Train library and a restyled page, then writes a JSON report."""
+        res = {"ok": False, "platform": sys.platform, "frozen": FROZEN, "python": sys.version.split()[0]}
+        try:
+            self.root.update()
+            res["window"] = [self.root.winfo_width(), self.root.winfo_height()]
+            self.select_tab(self.snippets)
+            card = self.snippets.add_live("html", "index.html", "smoke")
+            self.snippets.live_append(card, "<!doctype html><html><head><title>t</title></head><body><h1>Hi</h1></body></html>")
+            self.snippets.live_finish(card, "ask")
+            res["code_tab"] = self.active is self.snippets
+            res["starter_pack"] = len(glob.glob(os.path.join(RES_DIR, "training_pack", "**", "*.html"), recursive=True))
+            res["restyle"] = bool(restyle) and "<style>" in restyle.apply(card.code, "glass")
+            res["page_builder"] = bool(page_builder) and "</html>" in page_builder.build_page(
+                "darksaas", "#16a34a", ["Navbar", "Hero", "Footer"], page_builder.DEFAULT)
+            res["preview_server"] = urllib.request.urlopen(self.preview.url() + "__v", timeout=5).status == 200
+            res["engine_found"] = os.path.exists(ENGINE)
+            res["ok"] = all(res[k] for k in ("code_tab", "restyle", "page_builder", "preview_server")) and res["starter_pack"] > 300
+        except Exception as e:
+            res["error"] = repr(e)
+        with open(out, "w", encoding="utf-8") as f:
+            json.dump(res, f, indent=1)
+        self.on_close(force=True)
 
     def styletest(self, out):
         if not self.ready:
