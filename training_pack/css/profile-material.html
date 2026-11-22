@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile card - Material</title>
+<style>
+/* Profile card | style: Material | CSS component: profile card
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #fffbfe; --surface: #ffffff; --text: #1c1b1f; --muted: #625b71;
+  --primary: #6750a4; --on-primary: #ffffff; --accent: #e8def8; --border: #e7e0ec;
+  --radius: 16px; --shadow: 0 1px 3px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08);
+  --font: Roboto, system-ui, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #fffbfe; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.profile { width: min(340px, 100%); text-align: center; padding: 0 0 26px; overflow: hidden; }
+.cover { height: 110px; background: linear-gradient(135deg, var(--primary), var(--accent)); }
+.pic { width: 96px; height: 96px; border-radius: 50%; margin: -48px auto 10px; border: 5px solid var(--surface); background: #f59e0b; display: grid; place-items: center; font-size: 2rem; font-weight: 800; color: #fff; }
+.profile h3 { font-size: 1.2rem; }
+.profile p { color: var(--muted); font-size: .92rem; margin: 4px 22px 18px; }
+.nums { display: flex; justify-content: center; gap: 26px; margin-bottom: 20px; }
+.nums b { display: block; font-size: 1.15rem; }
+.nums span { color: var(--muted); font-size: .8rem; }
+.follow { padding: 10px 26px; border-radius: 999px; border: 0; background: var(--primary); color: var(--on-primary); font: inherit; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<article class="profile surface">
+  <div class="cover"></div><div class="pic">MK</div><h3>Maya Kim</h3><p>Product designer making calm, friendly interfaces.</p>
+  <div class="nums"><div><b>128</b><span>Posts</span></div><div><b>4.2k</b><span>Followers</span></div><div><b>312</b><span>Following</span></div></div>
+  <button class="follow">Follow</button>
+</article>
+</body>
+</html>

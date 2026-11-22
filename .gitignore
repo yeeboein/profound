@@ -1,0 +1,19 @@
+# Built app and large downloads (too big for GitHub; see README for how to get them)
+Profound-App/
+engine/
+models/
+*.gguf
+
+# Build / Python leftovers
+build/
+dist/
+__pycache__/
+*.pyc
+*.spec
+*.vsix
+
+# Backups and local junk
+profound_app.before_*.py
+*.log
+.DS_Store
+Thumbs.db

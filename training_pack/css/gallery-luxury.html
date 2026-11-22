@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image gallery grid - Luxury</title>
+<style>
+/* Image gallery grid | style: Luxury | CSS component: image gallery grid
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0c0c0c; --surface: #141414; --text: #f5f1e6; --muted: #a89f8a;
+  --primary: #c9a227; --on-primary: #0c0c0c; --accent: #e8d48b; --border: rgba(201,162,39,.35);
+  --radius: 2px; --shadow: 0 20px 50px -25px rgba(201,162,39,.35);
+  --font: 'Helvetica Neue', Arial, sans-serif; --head: Georgia, 'Times New Roman', serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0c0c0c; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.gallery { width: min(900px, 100%); display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); grid-auto-rows: 160px; gap: 12px; }
+.tile { border-radius: var(--radius); overflow: hidden; position: relative; cursor: pointer; }
+.tile:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+.tile div { width: 100%; height: 100%; transition: transform .4s ease; }
+.tile:hover div { transform: scale(1.08); }
+.tile span { position: absolute; left: 12px; bottom: 10px; color: #fff; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,.5); opacity: 0; transition: opacity .25s; }
+.tile:hover span { opacity: 1; }
+</style>
+</head>
+<body>
+<section class="gallery">
+  <a class="tile"><div style="background:linear-gradient(135deg,#f97316,#ec4899)"></div><span>Sunset</span></a>
+  <a class="tile"><div style="background:linear-gradient(135deg,#06b6d4,#3b82f6)"></div><span>Ocean</span></a>
+  <a class="tile"><div style="background:linear-gradient(135deg,#22c55e,#14b8a6)"></div><span>Forest</span></a>
+  <a class="tile"><div style="background:linear-gradient(135deg,#8b5cf6,#6366f1)"></div><span>Dusk</span></a>
+  <a class="tile"><div style="background:linear-gradient(135deg,#eab308,#f97316)"></div><span>Desert</span></a>
+</section>
+</body>
+</html>

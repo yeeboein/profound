@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Quiet Art of Slow Software</title>
+<style>
+  :root { --bg: #faf8f3; --ink: #1f1d1a; --muted: #6f6a60; --line: #e7e1d4; --accent: #b4532a; --code: #f1ece1;
+          --serif: Georgia, "Iowan Old Style", "Times New Roman", serif; --sans: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--serif); font-size: 1.15rem; line-height: 1.75; }
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0; z-index: 10; }
+  header.site { font-family: var(--sans); display: flex; justify-content: space-between; align-items: center; padding: 22px 6vw; font-size: .95rem; }
+  header.site b { letter-spacing: .2em; text-transform: uppercase; font-size: .85rem; }
+  header.site a { color: var(--muted); text-decoration: none; margin-left: 20px; }
+
+  article { width: min(680px, 90vw); margin: 40px auto 80px; }
+  .kicker { font-family: var(--sans); color: var(--accent); font-weight: 700; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { font-size: clamp(2.2rem, 5vw, 3.3rem); line-height: 1.12; letter-spacing: -.015em; margin: 12px 0 18px; }
+  .dek { font-size: 1.3rem; color: var(--muted); font-style: italic; }
+  .meta { display: flex; align-items: center; gap: 12px; font-family: var(--sans); font-size: .9rem; color: var(--muted);
+          padding: 22px 0; margin: 26px 0 34px; border-block: 1px solid var(--line); }
+  .meta .av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e9b38a, var(--accent)); }
+  .meta b { color: var(--ink); }
+
+  article p { margin-bottom: 1.4em; }
+  article > p:first-of-type::first-letter { float: left; font-size: 4.2rem; line-height: .85; padding: 6px 10px 0 0; color: var(--accent); font-weight: 700; }
+  h2 { font-size: 1.7rem; margin: 2em 0 .6em; letter-spacing: -.01em; }
+  a { color: var(--accent); }
+  blockquote { margin: 2em 0; padding: 4px 0 4px 26px; border-left: 3px solid var(--accent); font-size: 1.45rem; line-height: 1.5; font-style: italic; }
+  blockquote cite { display: block; margin-top: 10px; font-family: var(--sans); font-size: .9rem; font-style: normal; color: var(--muted); }
+  pre { background: var(--code); border-radius: 10px; padding: 18px 20px; overflow-x: auto; font-size: .9rem; line-height: 1.6; margin: 1.6em 0; }
+  code { font-family: Consolas, "SF Mono", monospace; }
+  p code { background: var(--code); padding: 2px 6px; border-radius: 5px; font-size: .88em; }
+  figure { margin: 2em 0; }
+  .art { height: 260px; border-radius: 14px; background: radial-gradient(circle at 30% 40%, #f3c98b, transparent 50%),
+         radial-gradient(circle at 70% 60%, #c46a3a, transparent 55%), #2d2a26; }
+  figcaption { font-family: var(--sans); font-size: .85rem; color: var(--muted); margin-top: 10px; text-align: center; }
+
+  .author { display: flex; gap: 18px; padding: 26px; border: 1px solid var(--line); border-radius: 14px; margin-top: 50px; font-family: var(--sans); font-size: .95rem; }
+  .author .av { flex: none; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #e9b38a, var(--accent)); }
+  .author p { color: var(--muted); margin: 4px 0 0; }
+  .related { width: min(980px, 90vw); margin: 0 auto 80px; font-family: var(--sans); }
+  .related h3 { font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .related .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+  .related a { display: block; padding: 22px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; color: var(--ink);
+               font-family: var(--serif); font-size: 1.15rem; line-height: 1.35; transition: border-color .2s, transform .2s; }
+  .related a:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .related small { display: block; font-family: var(--sans); color: var(--muted); font-size: .8rem; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<header class="site"><b>Margin Notes</b><nav><a href="#">Essays</a><a href="#">Archive</a><a href="#">About</a></nav></header>
+
+<article>
+  <div class="kicker">Essay &middot; Craft</div>
+  <h1>The Quiet Art of Slow Software</h1>
+  <p class="dek">Why the tools we love most are rarely the ones that move fastest.</p>
+  <div class="meta"><span class="av"></span><span><b>Elena Brooks</b><br>March 14, 2026 &middot; 7 min read</span></div>
+
+  <p>There is a particular kind of joy in opening a program that has not changed in years. Every button is exactly where your hand expects it. Nothing blinks, nothing asks you to sign in, nothing wants to tell you about its new features.</p>
+  <p>We tend to celebrate speed: release cadence, deploys per day, the number of features shipped this quarter. But users rarely ask for more. They ask for <em>less friction</em>, and that is a much harder thing to build.</p>
+
+  <blockquote>Software that respects you is software that stays out of your way.<cite>&mdash; a note pinned above my desk</cite></blockquote>
+
+  <h2>Small, sharp, finished</h2>
+  <p>The best tools feel finished. Not abandoned, but complete: they solve one problem well and resist the urge to grow. Consider how much a function like <code>debounce</code> quietly improves an interface:</p>
+<pre><code>function debounce(fn, wait = 200) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), wait);
+  };
+}</code></pre>
+  <p>Eight lines, written once, trusted forever. That is the kind of software I want more of.</p>
+
+  <figure><div class="art" role="img" aria-label="Abstract warm gradient"></div><figcaption>Warm light, slow afternoons, good tools.</figcaption></figure>
+
+  <h2>Building for the long afternoon</h2>
+  <p>Next time you plan a feature, ask a different question: will this still feel right in five years? If the answer is no, maybe the most thoughtful thing you can ship is nothing at all.</p>
+
+  <div class="author"><span class="av"></span><div><b>Elena Brooks</b><p>Writes about craft, tools and the slow web. Previously design lead at a company you have probably heard of.</p></div></div>
+</article>
+
+<section class="related">
+  <h3>Keep reading</h3>
+  <div class="grid">
+    <a href="#">On the beauty of plain text<small>5 min read</small></a>
+    <a href="#">What gardeners know about software<small>9 min read</small></a>
+    <a href="#">A defence of boring technology<small>6 min read</small></a>
+  </div>
+</section>
+<script>
+  // reading progress bar
+  const bar = document.getElementById('progress');
+  addEventListener('scroll', () => {
+    const h = document.documentElement;
+    bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  }, { passive: true });
+</script>
+</body>
+</html>

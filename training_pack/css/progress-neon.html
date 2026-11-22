@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress bars - Neon Cyberpunk</title>
+<style>
+/* Progress bars | style: Neon Cyberpunk | CSS component: progress bars
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0a0014; --surface: #14002a; --text: #f5f3ff; --muted: #c4b5fd;
+  --primary: #ff2bd6; --on-primary: #0a0014; --accent: #00f0ff; --border: rgba(0,240,255,.45);
+  --radius: 4px; --shadow: 0 0 18px rgba(255,43,214,.45), inset 0 0 12px rgba(0,240,255,.15);
+  --font: ui-monospace, 'Cascadia Code', Consolas, monospace; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0a0014; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.box { width: min(460px, 100%); padding: 26px; display: grid; gap: 18px; }
+.label { display: flex; justify-content: space-between; font-size: .9rem; font-weight: 600; margin-bottom: 6px; }
+.bar { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); animation: grow 1.2s ease-out both; }
+.striped .fill { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.25) 0 10px, transparent 10px 20px), linear-gradient(90deg, var(--primary), var(--accent)); }
+@keyframes grow { from { width: 0; } }
+</style>
+</head>
+<body>
+<div class="box surface">
+  <div><div class="label"><span>Uploading</span><span>72%</span></div><div class="bar"><div class="fill" style="width:72%"></div></div></div>
+  <div class="striped"><div class="label"><span>Storage</span><span>45%</span></div><div class="bar"><div class="fill" style="width:45%"></div></div></div>
+</div>
+</body>
+</html>

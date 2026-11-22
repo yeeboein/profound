@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Call-to-action banner - Material</title>
+<style>
+/* Call-to-action banner | style: Material | CSS component: call-to-action banner
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #fffbfe; --surface: #ffffff; --text: #1c1b1f; --muted: #625b71;
+  --primary: #6750a4; --on-primary: #ffffff; --accent: #e8def8; --border: #e7e0ec;
+  --radius: 16px; --shadow: 0 1px 3px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08);
+  --font: Roboto, system-ui, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #fffbfe; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.cta { width: min(900px, 100%); padding: 44px; text-align: center; position: relative; overflow: hidden; }
+.cta::before { content: ""; position: absolute; inset: -40%; background: radial-gradient(circle, color-mix(in srgb, var(--primary) 25%, transparent), transparent 60%); z-index: -1; }
+.cta h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 10px; }
+.cta p { color: var(--muted); margin-bottom: 24px; }
+.cta form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
+.cta input { flex: 1; padding: 13px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--text); font: inherit; }
+.cta button { padding: 13px 22px; border: 0; border-radius: var(--radius); background: var(--primary); color: var(--on-primary); font: inherit; font-weight: 700; cursor: pointer; }
+@media (max-width: 520px) { .cta form { flex-direction: column; } }
+</style>
+</head>
+<body>
+<section class="cta surface" style="isolation:isolate">
+  <h2>Ready to get started?</h2><p>Join 10,000+ makers. Free forever for personal projects.</p>
+  <form onsubmit="event.preventDefault()"><input type="email" placeholder="Your email" aria-label="Email"><button>Get early access</button></form>
+</section>
+</body>
+</html>

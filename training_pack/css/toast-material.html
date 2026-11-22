@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toast notifications - Material</title>
+<style>
+/* Toast notifications | style: Material | CSS component: toast notifications
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #fffbfe; --surface: #ffffff; --text: #1c1b1f; --muted: #625b71;
+  --primary: #6750a4; --on-primary: #ffffff; --accent: #e8def8; --border: #e7e0ec;
+  --radius: 16px; --shadow: 0 1px 3px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.08);
+  --font: Roboto, system-ui, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #fffbfe; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.toasts { position: fixed; right: 20px; bottom: 20px; display: grid; gap: 10px; }
+.toast { display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-width: 280px; animation: slide .35s cubic-bezier(.2,.9,.3,1.2); }
+.toast i { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-style: normal; font-weight: 800; }
+.toast small { display: block; color: var(--muted); }
+.toast button { margin-left: auto; border: 0; background: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+@keyframes slide { from { transform: translateX(120%); opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="toasts" aria-live="polite">
+  <div class="toast surface"><i style="background:#16a34a">&#10003;</i><div><b>Saved</b><small>Your changes were saved.</small></div><button aria-label="Close">&times;</button></div>
+  <div class="toast surface"><i style="background:#2563eb">i</i><div><b>New message</b><small>Ava sent you a file.</small></div><button aria-label="Close">&times;</button></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search bar - Nature</title>
+<style>
+/* Search bar | style: Nature | CSS component: search bar
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #f4efe6; --surface: #fffaf1; --text: #2b2a26; --muted: #6d6a5f;
+  --primary: #2f5d50; --on-primary: #ffffff; --accent: #c8663b; --border: #e3d5b8;
+  --radius: 18px; --shadow: 0 16px 30px -22px rgba(47,93,80,.5);
+  --font: 'Segoe UI', system-ui, sans-serif; --head: Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #f4efe6; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.search { width: min(560px, 100%); display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 18px; border-radius: 999px; transition: box-shadow .2s; }
+.search:focus-within { box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 25%, transparent), var(--shadow); }
+.search svg { width: 20px; height: 20px; color: var(--muted); flex: none; }
+.search input { flex: 1; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 1rem; outline: none; padding: 8px 0; }
+.search kbd { font-family: inherit; font-size: .78rem; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 2px 6px; }
+.search button { border: 0; border-radius: 999px; padding: 10px 20px; background: var(--primary); color: var(--on-primary); font: inherit; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<form class="search surface" role="search" onsubmit="event.preventDefault()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  <input placeholder="Search anything..." aria-label="Search"><kbd>Ctrl K</kbd><button>Search</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin dashboard</title>
+<style>
+  :root { --bg: #0f1117; --panel: #161a23; --panel2: #1d2230; --line: #262c3a; --text: #e6e9ef; --muted: #8b93a7;
+          --accent: #7c5cff; --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --radius: 14px;
+          --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  aside { background: var(--panel); border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .logo { font-weight: 800; font-size: 1.1rem; padding: 6px 12px 22px; display: flex; gap: 10px; align-items: center; }
+  .logo i { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #22d3ee); }
+  aside a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; color: var(--muted); text-decoration: none; font-size: .93rem; }
+  aside a:hover { background: var(--panel2); color: var(--text); }
+  aside a.on { background: rgba(124,92,255,.14); color: #fff; }
+  aside svg { width: 18px; height: 18px; }
+
+  main { padding: 26px 30px; overflow: auto; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; gap: 16px; }
+  .top h1 { font-size: 1.5rem; letter-spacing: -.02em; }
+  .top p { color: var(--muted); font-size: .9rem; }
+  .search { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; color: var(--text); width: 260px; font: inherit; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #ef4444); }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 18px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .kpi .label { color: var(--muted); font-size: .85rem; }
+  .kpi .value { font-size: 1.8rem; font-weight: 700; margin: 6px 0; letter-spacing: -.02em; }
+  .delta { font-size: .8rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .up { color: var(--green); background: rgba(34,197,94,.12); } .down { color: var(--red); background: rgba(239,68,68,.12); }
+
+  .row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .card h2 { font-size: 1rem; margin-bottom: 16px; display: flex; justify-content: space-between; }
+  .card h2 span { color: var(--muted); font-weight: 500; font-size: .85rem; }
+  .chart { width: 100%; height: 220px; }
+  .bars { display: flex; align-items: flex-end; gap: 10px; height: 200px; }
+  .bar { flex: 1; border-radius: 8px 8px 4px 4px; background: linear-gradient(180deg, var(--accent), rgba(124,92,255,.25)); position: relative; transition: filter .2s; }
+  .bar:hover { filter: brightness(1.25); }
+  .bar span { position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%); font-size: .75rem; color: var(--muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: left; color: var(--muted); font-weight: 500; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  td { padding: 12px; border-bottom: 1px solid var(--line); }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .badge { padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 600; }
+  .paid { color: var(--green); background: rgba(34,197,94,.12); }
+  .pending { color: var(--amber); background: rgba(245,158,11,.12); }
+  .refunded { color: var(--red); background: rgba(239,68,68,.12); }
+
+  @media (max-width: 900px) { body { grid-template-columns: 1fr; } aside { display: none; } .row { grid-template-columns: 1fr; } .search { display: none; } }
+</style>
+</head>
+<body>
+<aside>
+  <div class="logo"><i></i>Orbit</div>
+  <a class="on" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Overview</a>
+  <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/></svg>Analytics</a>
+  <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>Customers</a>
+  <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Settings</a>
+</aside>
+
+<main>
+  <div class="top">
+    <div><h1>Good morning, Sam</h1><p>Here's what's happening with your store today.</p></div>
+    <div style="display:flex;gap:12px;align-items:center"><input class="search" placeholder="Search..."><div class="avatar"></div></div>
+  </div>
+
+  <section class="kpis">
+    <div class="card kpi"><div class="label">Revenue</div><div class="value">$48,290</div><span class="delta up">+12.4%</span></div>
+    <div class="card kpi"><div class="label">Orders</div><div class="value">1,284</div><span class="delta up">+8.1%</span></div>
+    <div class="card kpi"><div class="label">Conversion</div><div class="value">3.42%</div><span class="delta down">-0.6%</span></div>
+    <div class="card kpi"><div class="label">Active users</div><div class="value">9,731</div><span class="delta up">+4.9%</span></div>
+  </section>
+
+  <section class="row">
+    <div class="card">
+      <h2>Revenue <span>Last 12 weeks</span></h2>
+      <svg class="chart" viewBox="0 0 600 220" preserveAspectRatio="none">
+        <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c5cff" stop-opacity=".45"/><stop offset="1" stop-color="#7c5cff" stop-opacity="0"/></linearGradient></defs>
+        <g stroke="#262c3a"><line x1="0" y1="55" x2="600" y2="55"/><line x1="0" y1="110" x2="600" y2="110"/><line x1="0" y1="165" x2="600" y2="165"/></g>
+        <path d="M0 170 L55 150 L110 160 L165 120 L220 130 L275 95 L330 105 L385 70 L440 85 L495 50 L550 60 L600 30 L600 220 L0 220 Z" fill="url(#fill)"/>
+        <path d="M0 170 L55 150 L110 160 L165 120 L220 130 L275 95 L330 105 L385 70 L440 85 L495 50 L550 60 L600 30" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="card">
+      <h2>Orders <span>This week</span></h2>
+      <div class="bars">
+        <div class="bar" style="height:45%"><span>Mon</span></div><div class="bar" style="height:70%"><span>Tue</span></div>
+        <div class="bar" style="height:55%"><span>Wed</span></div><div class="bar" style="height:90%"><span>Thu</span></div>
+        <div class="bar" style="height:65%"><span>Fri</span></div><div class="bar" style="height:35%"><span>Sat</span></div>
+        <div class="bar" style="height:25%"><span>Sun</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Recent orders <span>View all</span></h2>
+    <table>
+      <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>#3201</td><td>Ava Johnson</td><td>Today</td><td>$129.00</td><td><span class="badge paid">Paid</span></td></tr>
+        <tr><td>#3200</td><td>Liam Chen</td><td>Today</td><td>$54.90</td><td><span class="badge pending">Pending</span></td></tr>
+        <tr><td>#3199</td><td>Mia Garcia</td><td>Yesterday</td><td>$310.00</td><td><span class="badge paid">Paid</span></td></tr>
+        <tr><td>#3198</td><td>Noah Patel</td><td>Yesterday</td><td>$22.50</td><td><span class="badge refunded">Refunded</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>

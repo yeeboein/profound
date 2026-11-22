@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badges and chips - Neon Cyberpunk</title>
+<style>
+/* Badges and chips | style: Neon Cyberpunk | CSS component: badges and chips
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0a0014; --surface: #14002a; --text: #f5f3ff; --muted: #c4b5fd;
+  --primary: #ff2bd6; --on-primary: #0a0014; --accent: #00f0ff; --border: rgba(0,240,255,.45);
+  --radius: 4px; --shadow: 0 0 18px rgba(255,43,214,.45), inset 0 0 12px rgba(0,240,255,.15);
+  --font: ui-monospace, 'Cascadia Code', Consolas, monospace; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0a0014; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.wrap { display: flex; flex-wrap: wrap; gap: 10px; max-width: 520px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: .82rem; font-weight: 700;
+         background: color-mix(in srgb, var(--c, var(--primary)) 16%, transparent); color: var(--c, var(--primary)); }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 8px 6px 14px; border-radius: 999px; border: 1px solid var(--border); }
+.chip button { border: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--border); color: var(--text); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">New</span><span class="badge" style="--c:#16a34a">Active</span><span class="badge" style="--c:#d97706">Pending</span>
+  <span class="badge" style="--c:#dc2626">Failed</span>
+  <span class="chip">Design <button aria-label="Remove">&times;</button></span><span class="chip">CSS <button aria-label="Remove">&times;</button></span>
+</div>
+</body>
+</html>

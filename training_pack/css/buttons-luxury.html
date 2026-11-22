@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buttons - Luxury</title>
+<style>
+/* Buttons | style: Luxury | CSS component: buttons
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0c0c0c; --surface: #141414; --text: #f5f1e6; --muted: #a89f8a;
+  --primary: #c9a227; --on-primary: #0c0c0c; --accent: #e8d48b; --border: rgba(201,162,39,.35);
+  --radius: 2px; --shadow: 0 20px 50px -25px rgba(201,162,39,.35);
+  --font: 'Helvetica Neue', Arial, sans-serif; --head: Georgia, 'Times New Roman', serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0c0c0c; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: var(--radius); border: 1px solid transparent;
+       font: inherit; font-weight: 600; cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, filter .2s ease; }
+.btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+.btn:active { transform: translateY(0); }
+.btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow); }
+.btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+.btn-ghost { background: transparent; color: var(--primary); }
+.btn-pill { border-radius: 999px; }
+.btn svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <button class="btn btn-primary">Get started</button>
+  <button class="btn btn-outline">Learn more</button>
+  <button class="btn btn-ghost">Cancel</button>
+  <button class="btn btn-primary btn-pill">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    Continue</button>
+</div>
+</body>
+</html>

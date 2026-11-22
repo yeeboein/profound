@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breadcrumbs and pagination - Retro 90s</title>
+<style>
+/* Breadcrumbs and pagination | style: Retro 90s | CSS component: breadcrumbs and pagination
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #008080; --surface: #c0c0c0; --text: #000000; --muted: #404040;
+  --primary: #000080; --on-primary: #ffffff; --accent: #ffff00; --border: #808080;
+  --radius: 0px; --shadow: inset -2px -2px 0 #808080, inset 2px 2px 0 #ffffff;
+  --font: Tahoma, 'MS Sans Serif', sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #008080; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.box { padding: 22px 26px; display: grid; gap: 22px; }
+.crumbs { display: flex; gap: 8px; list-style: none; padding: 0; font-size: .92rem; }
+.crumbs a { color: var(--muted); text-decoration: none; }
+.crumbs a:hover { color: var(--primary); }
+.crumbs li + li::before { content: "/"; margin-right: 8px; color: var(--border); }
+.crumbs [aria-current] { font-weight: 700; }
+.pages { display: flex; gap: 6px; }
+.pages a { min-width: 38px; height: 38px; display: grid; place-items: center; border-radius: calc(var(--radius) * .6); border: 1px solid var(--border); color: var(--text); text-decoration: none; transition: all .15s; }
+.pages a:hover { border-color: var(--primary); }
+.pages a.on { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+</style>
+</head>
+<body>
+<nav class="box surface" aria-label="Navigation">
+  <ol class="crumbs"><li><a href="#">Home</a></li><li><a href="#">Shop</a></li><li aria-current="page">Shoes</li></ol>
+  <div class="pages"><a href="#">&lsaquo;</a><a href="#">1</a><a class="on" href="#">2</a><a href="#">3</a><a href="#">&rsaquo;</a></div>
+</nav>
+</body>
+</html>

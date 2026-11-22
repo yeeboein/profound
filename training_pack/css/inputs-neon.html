@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Form fields - Neon Cyberpunk</title>
+<style>
+/* Form fields | style: Neon Cyberpunk | CSS component: form fields
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0a0014; --surface: #14002a; --text: #f5f3ff; --muted: #c4b5fd;
+  --primary: #ff2bd6; --on-primary: #0a0014; --accent: #00f0ff; --border: rgba(0,240,255,.45);
+  --radius: 4px; --shadow: 0 0 18px rgba(255,43,214,.45), inset 0 0 12px rgba(0,240,255,.15);
+  --font: ui-monospace, 'Cascadia Code', Consolas, monospace; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0a0014; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.form { width: min(520px, 100%); padding: 28px; display: grid; gap: 16px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; font-size: .9rem; }
+.field input, .field select, .field textarea { padding: 12px 14px; border: 1px solid var(--border); border-radius: calc(var(--radius) * .6);
+    background: transparent; color: var(--text); font: inherit; outline: none; transition: border-color .2s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
+.hint { font-size: .8rem; color: var(--muted); }
+.field.error input { border-color: #ef4444; }
+.field.error .hint { color: #ef4444; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+</style>
+</head>
+<body>
+<form class="form surface">
+  <div class="two"><div class="field"><label>First name</label><input value="Ada"></div><div class="field"><label>Last name</label><input value="Lovelace"></div></div>
+  <div class="field error"><label>Email</label><input value="ada@"><span class="hint">Please enter a valid email.</span></div>
+  <div class="field"><label>Plan</label><select><option>Starter</option><option>Pro</option></select></div>
+  <div class="field"><label>Message</label><textarea rows="4" placeholder="Tell us more..."></textarea></div>
+</form>
+</body>
+</html>

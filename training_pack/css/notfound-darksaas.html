@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 page - Dark SaaS</title>
+<style>
+/* 404 page | style: Dark SaaS | CSS component: 404 page
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0b0f19; --surface: #111827; --text: #e5e7eb; --muted: #94a3b8;
+  --primary: #6366f1; --on-primary: #ffffff; --accent: #22d3ee; --border: rgba(255,255,255,.08);
+  --radius: 14px; --shadow: 0 20px 40px -20px rgba(99,102,241,.45);
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0b0f19; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); background-image: linear-gradient(180deg, rgba(255,255,255,.03), transparent); }
+
+.nf { text-align: center; }
+.nf h1 { font-size: clamp(5rem, 20vw, 10rem); line-height: 1; font-weight: 900; color: var(--primary); text-shadow: var(--shadow); }
+.nf h2 { margin: 10px 0 8px; }
+.nf p { color: var(--muted); margin-bottom: 26px; }
+.nf a { padding: 12px 24px; border-radius: var(--radius); background: var(--primary); color: var(--on-primary); text-decoration: none; font-weight: 700; display: inline-block; transition: transform .15s; }
+.nf a:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body>
+<main class="nf"><h1>404</h1><h2>Page not found</h2><p>The page you're looking for wandered off.</p><a href="/">Take me home</a></main>
+</body>
+</html>

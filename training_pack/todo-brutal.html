@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DO IT - Neo-brutalist to-do</title>
+<style>
+  :root { --bg: #fffdf5; --ink: #000; --yellow: #ffde59; --aqua: #5ce1e6; --pink: #ff8fab; --green: #7ed957;
+          --shadow: 6px 6px 0 var(--ink); --font: "Arial Black", "Segoe UI Black", system-ui, sans-serif; --body: system-ui, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); min-height: 100vh; padding: 50px 20px;
+         background-image: radial-gradient(var(--ink) 1px, transparent 1px); background-size: 22px 22px; }
+  .app { width: min(560px, 100%); margin: 0 auto; }
+  h1 { font-family: var(--font); font-size: clamp(3rem, 12vw, 5rem); line-height: .9; letter-spacing: -.03em; }
+  h1 span { background: var(--yellow); border: 3px solid var(--ink); box-shadow: var(--shadow); padding: 0 12px; display: inline-block; transform: rotate(-2deg); }
+  .sub { font-weight: 700; margin: 18px 0 30px; }
+
+  .panel { background: #fff; border: 3px solid var(--ink); box-shadow: var(--shadow); padding: 20px; }
+  form { display: flex; gap: 10px; }
+  input[type=text] { flex: 1; padding: 14px; border: 3px solid var(--ink); font: inherit; font-weight: 700; outline: none; background: var(--bg); }
+  input[type=text]:focus { background: var(--aqua); }
+  .btn { padding: 12px 20px; border: 3px solid var(--ink); background: var(--pink); font-family: var(--font); cursor: pointer;
+         box-shadow: 4px 4px 0 var(--ink); transition: transform .08s, box-shadow .08s; }
+  .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+
+  .filters { display: flex; gap: 8px; margin: 20px 0 14px; flex-wrap: wrap; }
+  .filters button { padding: 6px 14px; border: 3px solid var(--ink); background: #fff; font-weight: 800; cursor: pointer; }
+  .filters button.on { background: var(--ink); color: var(--yellow); }
+
+  ul { list-style: none; padding: 0; display: grid; gap: 10px; }
+  li { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 3px solid var(--ink); background: var(--bg);
+       font-weight: 700; animation: pop .25s ease-out; }
+  li:nth-child(3n+1) { background: #fff7cc; } li:nth-child(3n+2) { background: #dff9fa; }
+  li.done span { text-decoration: line-through 3px; opacity: .55; }
+  li input { width: 22px; height: 22px; accent-color: var(--ink); cursor: pointer; }
+  li span { flex: 1; word-break: break-word; }
+  li button { border: 3px solid var(--ink); background: #fff; width: 32px; height: 32px; font-weight: 900; cursor: pointer; }
+  li button:hover { background: var(--pink); }
+  @keyframes pop { from { transform: scale(.9) rotate(-1deg); opacity: 0; } }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; font-weight: 800; }
+  .sticker { position: fixed; right: 30px; bottom: 30px; background: var(--green); border: 3px solid var(--ink); box-shadow: var(--shadow);
+             padding: 10px 16px; font-family: var(--font); transform: rotate(6deg); }
+  .empty { text-align: center; padding: 26px; font-weight: 800; border: 3px dashed var(--ink); }
+</style>
+</head>
+<body>
+<main class="app">
+  <h1>GET<br><span>STUFF</span><br>DONE.</h1>
+  <p class="sub">No excuses. Just a list. (It saves itself.)</p>
+  <section class="panel">
+    <form id="form"><input type="text" id="text" placeholder="What needs doing?" maxlength="120" autocomplete="off"><button class="btn">ADD</button></form>
+    <div class="filters" id="filters">
+      <button class="on" data-f="all">ALL</button><button data-f="open">TO DO</button><button data-f="done">DONE</button>
+    </div>
+    <ul id="list"></ul>
+    <div class="foot"><span id="count"></span><button class="btn" id="clear" style="background:var(--yellow)">CLEAR DONE</button></div>
+  </section>
+</main>
+<div class="sticker">&#9733; YOU GOT THIS</div>
+<script>
+  const KEY = 'brutal-todos';
+  let todos = JSON.parse(localStorage.getItem(KEY) || '[]'), filter = 'all';
+  const list = document.getElementById('list');
+
+  function save() { localStorage.setItem(KEY, JSON.stringify(todos)); render(); }
+  function render() {
+    const shown = todos.filter(t => filter === 'all' || (filter === 'done') === t.done);
+    list.innerHTML = '';
+    if (!shown.length) list.innerHTML = '<li class="empty">NOTHING HERE. NICE.</li>';
+    shown.forEach(t => {
+      const li = document.createElement('li');
+      li.className = t.done ? 'done' : '';
+      li.innerHTML = `<input type="checkbox" ${t.done ? 'checked' : ''} aria-label="Done"><span></span><button aria-label="Delete">&times;</button>`;
+      li.querySelector('span').textContent = t.text;  // textContent: never inject HTML
+      li.querySelector('input').onchange = () => { t.done = !t.done; save(); };
+      li.querySelector('button').onclick = () => { todos = todos.filter(x => x !== t); save(); };
+      list.appendChild(li);
+    });
+    const left = todos.filter(t => !t.done).length;
+    document.getElementById('count').textContent = `${left} LEFT`;
+  }
+  document.getElementById('form').onsubmit = e => {
+    e.preventDefault();
+    const input = document.getElementById('text'), text = input.value.trim();
+    if (text) { todos.unshift({ text, done: false }); input.value = ''; save(); }
+  };
+  document.getElementById('filters').onclick = e => {
+    if (!e.target.dataset.f) return;
+    filter = e.target.dataset.f;
+    document.querySelectorAll('#filters button').forEach(b => b.classList.toggle('on', b === e.target));
+    render();
+  };
+  document.getElementById('clear').onclick = () => { todos = todos.filter(t => !t.done); save(); };
+  render();
+</script>
+</body>
+</html>

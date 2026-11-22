@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alerts - Nature</title>
+<style>
+/* Alerts | style: Nature | CSS component: alerts
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #f4efe6; --surface: #fffaf1; --text: #2b2a26; --muted: #6d6a5f;
+  --primary: #2f5d50; --on-primary: #ffffff; --accent: #c8663b; --border: #e3d5b8;
+  --radius: 18px; --shadow: 0 16px 30px -22px rgba(47,93,80,.5);
+  --font: 'Segoe UI', system-ui, sans-serif; --head: Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #f4efe6; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.stack { width: min(560px, 100%); display: grid; gap: 12px; }
+.alert { display: flex; gap: 14px; padding: 16px 18px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent);
+         background: color-mix(in srgb, var(--c) 10%, var(--surface)); }
+.alert b { color: var(--c); display: block; }
+.alert p { color: var(--muted); font-size: .92rem; }
+.dot { flex: none; width: 10px; height: 10px; margin-top: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 25%, transparent); }
+</style>
+</head>
+<body>
+<div class="stack">
+  <div class="alert" style="--c:#16a34a"><span class="dot"></span><div><b>Saved</b><p>Your changes are live.</p></div></div>
+  <div class="alert" style="--c:#d97706"><span class="dot"></span><div><b>Heads up</b><p>Your trial ends in 3 days.</p></div></div>
+  <div class="alert" style="--c:#dc2626"><span class="dot"></span><div><b>Error</b><p>We couldn't reach the server.</p></div></div>
+</div>
+</body>
+</html>

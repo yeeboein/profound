@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testimonial cards - Clean Minimal</title>
+<style>
+/* Testimonial cards | style: Clean Minimal | CSS component: testimonial cards
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #ffffff; --surface: #ffffff; --text: #111827; --muted: #6b7280;
+  --primary: #2563eb; --on-primary: #ffffff; --accent: #0ea5e9; --border: #e5e7eb;
+  --radius: 8px; --shadow: 0 1px 2px rgba(17,24,39,.06);
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #ffffff; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: min(900px, 100%); }
+.quote { padding: 26px; display: flex; flex-direction: column; gap: 18px; }
+.stars { color: #f59e0b; letter-spacing: 2px; }
+.quote p { font-size: 1.02rem; }
+.who { display: flex; align-items: center; gap: 12px; }
+.who span { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-weight: 800; }
+.who small { display: block; color: var(--muted); }
+</style>
+</head>
+<body>
+<section class="quotes">
+  <figure class="quote surface"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>"We shipped our redesign in a week. Our customers noticed immediately."</p>
+    <figcaption class="who"><span>SK</span><div><b>Sara Kim</b><small>Head of Product, Lumen</small></div></figcaption></figure>
+  <figure class="quote surface"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>"The cleanest tool I've used in years. It just gets out of the way."</p>
+    <figcaption class="who"><span>DR</span><div><b>Diego Ruiz</b><small>Founder, Orbit</small></div></figcaption></figure>
+</section>
+</body>
+</html>

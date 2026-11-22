@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing page template - Soft Pastel</title>
+<style>
+/* Landing page template | style: Soft Pastel | full page template: navbar, hero, features, testimonials, pricing, CTA, footer
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #fdf6f0; --surface: #ffffff; --text: #3d3a4b; --muted: #7a7590;
+  --primary: #f48fb1; --on-primary: #3d3a4b; --accent: #9be3d0; --border: #f1e4ef;
+  --radius: 24px; --shadow: 0 14px 30px -18px rgba(61,58,75,.35);
+  --font: 'Segoe UI Rounded', Nunito, system-ui, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #fdf6f0; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.nav { width: min(1000px, 100%); display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; }
+.brand { font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+.brand i { width: 26px; height: 26px; border-radius: calc(var(--radius) * .6); background: var(--primary); display: inline-block; }
+.links { display: flex; gap: 24px; list-style: none; padding: 0; }
+.links a { color: var(--muted); text-decoration: none; font-weight: 500; transition: color .2s; }
+.links a:hover, .links a.active { color: var(--text); }
+.signup { padding: 9px 18px; border-radius: var(--radius); background: var(--primary); color: var(--on-primary); text-decoration: none; font-weight: 600; }
+@media (max-width: 700px) { .links { display: none; } }
+.hero { text-align: center; max-width: 760px; }
+.eyebrow { display: inline-block; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); font-size: .85rem; margin-bottom: 20px; }
+.hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); letter-spacing: -.03em; margin-bottom: 18px; }
+.hero h1 span { color: var(--primary); }
+.hero p { color: var(--muted); font-size: 1.15rem; margin-bottom: 30px; }
+.actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.actions a { padding: 13px 26px; border-radius: var(--radius); font-weight: 600; text-decoration: none; transition: transform .15s; }
+.actions a:hover { transform: translateY(-2px); }
+.primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow); }
+.secondary { border: 1px solid var(--border); color: var(--text); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: min(960px, 100%); }
+.card { padding: 26px; transition: transform .25s ease, box-shadow .25s ease; }
+.card:hover { transform: translateY(-6px); }
+.icon { width: 44px; height: 44px; border-radius: calc(var(--radius) * .7); display: grid; place-items: center;
+        background: var(--primary); color: var(--on-primary); margin-bottom: 16px; font-weight: 800; }
+.card h3 { margin-bottom: 6px; font-size: 1.1rem; }
+.card p { color: var(--muted); font-size: .95rem; }
+.quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; width: min(900px, 100%); }
+.quote { padding: 26px; display: flex; flex-direction: column; gap: 18px; }
+.stars { color: #f59e0b; letter-spacing: 2px; }
+.quote p { font-size: 1.02rem; }
+.who { display: flex; align-items: center; gap: 12px; }
+.who span { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-weight: 800; }
+.who small { display: block; color: var(--muted); }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; width: min(980px, 100%); align-items: stretch; }
+.plan { padding: 28px; display: flex; flex-direction: column; position: relative; }
+.plan.best { border: 2px solid var(--primary); transform: scale(1.03); }
+.tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--on-primary);
+       font-size: .75rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+.price { font-size: 2.4rem; font-weight: 800; margin: 10px 0; }
+.price small { font-size: .9rem; color: var(--muted); font-weight: 500; }
+.plan ul { list-style: none; padding: 0; margin: 16px 0 24px; display: grid; gap: 8px; flex: 1; color: var(--muted); }
+.plan li::before { content: "\2713"; color: var(--primary); margin-right: 8px; font-weight: 800; }
+.plan a { text-align: center; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-weight: 600; }
+.plan.best a { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+.cta { width: min(900px, 100%); padding: 44px; text-align: center; position: relative; overflow: hidden; }
+.cta::before { content: ""; position: absolute; inset: -40%; background: radial-gradient(circle, color-mix(in srgb, var(--primary) 25%, transparent), transparent 60%); z-index: -1; }
+.cta h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 10px; }
+.cta p { color: var(--muted); margin-bottom: 24px; }
+.cta form { display: flex; gap: 10px; max-width: 440px; margin: 0 auto; }
+.cta input { flex: 1; padding: 13px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--text); font: inherit; }
+.cta button { padding: 13px 22px; border: 0; border-radius: var(--radius); background: var(--primary); color: var(--on-primary); font: inherit; font-weight: 700; cursor: pointer; }
+@media (max-width: 520px) { .cta form { flex-direction: column; } }
+.footer { width: min(1000px, 100%); padding: 36px; display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 24px; }
+.footer h4 { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+.footer a { display: block; color: var(--muted); text-decoration: none; margin: 6px 0; transition: color .2s; }
+.footer a:hover { color: var(--primary); }
+.footer p { color: var(--muted); font-size: .92rem; margin-top: 8px; max-width: 32ch; }
+.bottom { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 18px; color: var(--muted); font-size: .85rem; }
+@media (max-width: 700px) { .footer { grid-template-columns: 1fr 1fr; } }
+body { display: block; padding: 0; }
+.page { width: min(1080px, 92vw); margin: 0 auto; display: grid; gap: 90px; padding: 24px 0 60px; justify-items: center; }
+</style>
+</head>
+<body>
+<div class="page">
+<nav class="nav surface">
+  <a class="brand"><i></i>Brand</a>
+  <ul class="links"><li><a class="active" href="#">Home</a></li><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">About</a></li></ul>
+  <a class="signup" href="#">Sign up</a>
+</nav>
+<header class="hero">
+  <span class="eyebrow">New &middot; Version 2.0 is out</span>
+  <h1>Build something <span>people love</span></h1>
+  <p>Everything you need to design, launch and grow your next idea, in one simple place.</p>
+  <div class="actions"><a class="primary" href="#">Start free</a><a class="secondary" href="#">Watch demo</a></div>
+</header>
+<section class="grid">
+  <article class="card surface"><div class="icon">1</div><h3>Fast setup</h3><p>Go from zero to live in minutes, not days.</p></article>
+  <article class="card surface"><div class="icon">2</div><h3>Secure</h3><p>Encryption and backups switched on by default.</p></article>
+  <article class="card surface"><div class="icon">3</div><h3>Scales with you</h3><p>From your first user to your millionth.</p></article>
+</section>
+<section class="quotes">
+  <figure class="quote surface"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>"We shipped our redesign in a week. Our customers noticed immediately."</p>
+    <figcaption class="who"><span>SK</span><div><b>Sara Kim</b><small>Head of Product, Lumen</small></div></figcaption></figure>
+  <figure class="quote surface"><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>"The cleanest tool I've used in years. It just gets out of the way."</p>
+    <figcaption class="who"><span>DR</span><div><b>Diego Ruiz</b><small>Founder, Orbit</small></div></figcaption></figure>
+</section>
+<section class="plans">
+  <div class="plan surface"><h3>Starter</h3><div class="price">$0<small>/mo</small></div><ul><li>1 project</li><li>Community help</li></ul><a href="#">Choose</a></div>
+  <div class="plan surface best"><span class="tag">Popular</span><h3>Pro</h3><div class="price">$19<small>/mo</small></div><ul><li>Unlimited projects</li><li>Priority support</li><li>Custom domain</li></ul><a href="#">Choose</a></div>
+  <div class="plan surface"><h3>Team</h3><div class="price">$49<small>/mo</small></div><ul><li>Everything in Pro</li><li>5 seats</li><li>SSO</li></ul><a href="#">Choose</a></div>
+</section>
+<section class="cta surface" style="isolation:isolate">
+  <h2>Ready to get started?</h2><p>Join 10,000+ makers. Free forever for personal projects.</p>
+  <form onsubmit="event.preventDefault()"><input type="email" placeholder="Your email" aria-label="Email"><button>Get early access</button></form>
+</section>
+<footer class="footer surface">
+  <div><b>Brand</b><p>Tools that help small teams do big things.</p></div>
+  <div><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a></div>
+  <div><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Blog</a></div>
+  <div><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a></div>
+  <div class="bottom">&copy; 2026 Brand Inc. All rights reserved.</div>
+</footer>
+</div>
+</body>
+</html>

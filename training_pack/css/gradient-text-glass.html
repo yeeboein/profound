@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gradient headline - Glassmorphism</title>
+<style>
+/* Gradient headline | style: Glassmorphism | CSS component: gradient headline
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #7c3aed; --surface: rgba(255,255,255,.14); --text: #ffffff; --muted: rgba(255,255,255,.75);
+  --primary: #ffffff; --on-primary: #7c3aed; --accent: #fde68a; --border: rgba(255,255,255,.3);
+  --radius: 20px; --shadow: 0 24px 48px -20px rgba(0,0,0,.35);
+  --font: system-ui, -apple-system, 'Segoe UI', sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: linear-gradient(135deg,#7c3aed,#db2777 55%,#f59e0b); color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+.title { text-align: center; }
+.title h1 { font-size: clamp(2.6rem, 8vw, 5.5rem); letter-spacing: -.04em; font-weight: 900;
+            background: linear-gradient(120deg, var(--primary), var(--accent), var(--primary)); background-size: 200% auto;
+            -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
+.title p { color: var(--muted); font-size: 1.1rem; margin-top: 12px; }
+@keyframes shine { to { background-position: 200% center; } }
+</style>
+</head>
+<body>
+<header class="title"><h1>Make it pop.</h1><p>An animated gradient headline in pure CSS.</p></header>
+</body>
+</html>

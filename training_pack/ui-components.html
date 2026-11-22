@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI component kit</title>
+<style>
+  /* ---- design tokens: change these to re-theme every component ---- */
+  :root {
+    --bg: #f8fafc; --surface: #ffffff; --ink: #0f172a; --muted: #64748b; --line: #e2e8f0;
+    --primary: #4f46e5; --primary-ink: #ffffff; --success: #16a34a; --warning: #d97706; --danger: #dc2626;
+    --radius-sm: 8px; --radius: 12px; --radius-lg: 18px;
+    --shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px -12px rgba(15,23,42,.18);
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b1020; --surface: #121a2f; --ink: #e2e8f0; --muted: #94a3b8; --line: #23304d; }
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--ink); line-height: 1.55; padding: 48px 6vw; }
+  h1 { font-size: 2rem; letter-spacing: -.02em; } .lead { color: var(--muted); margin: 6px 0 36px; }
+  section { margin-bottom: 40px; } section > h2 { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+  /* buttons */
+  .btn { --b: var(--primary); display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: var(--radius-sm);
+         border: 1px solid transparent; background: var(--b); color: var(--primary-ink); font: inherit; font-weight: 600; cursor: pointer;
+         transition: filter .15s, transform .1s, box-shadow .2s; }
+  .btn:hover { filter: brightness(1.08); box-shadow: 0 6px 16px -8px var(--b); } .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 3px solid color-mix(in srgb, var(--b) 40%, transparent); outline-offset: 2px; }
+  .btn.secondary { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .btn.ghost { background: transparent; color: var(--primary); }
+  .btn.danger { --b: var(--danger); }
+  .btn.pill { border-radius: 999px; } .btn.sm { padding: 6px 12px; font-size: .85rem; }
+
+  /* badges */
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: .78rem; font-weight: 600;
+           background: color-mix(in srgb, var(--c) 14%, transparent); color: var(--c); }
+  .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* toggle switch */
+  .switch { position: relative; width: 46px; height: 26px; display: inline-block; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--line); cursor: pointer; transition: background .2s; }
+  .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff;
+                        box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+  .switch input:checked + span { background: var(--primary); } .switch input:checked + span::after { transform: translateX(20px); }
+
+  /* cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 1.05rem; margin-bottom: 6px; } .card p { color: var(--muted); font-size: .93rem; }
+
+  /* alerts */
+  .alert { display: flex; gap: 12px; padding: 14px 16px; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent);
+           background: color-mix(in srgb, var(--c) 8%, var(--surface)); }
+  .alert b { color: var(--c); }
+
+  /* tabs */
+  .tabs { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; max-width: 560px; }
+  .tablist { display: flex; border-bottom: 1px solid var(--line); }
+  .tablist button { flex: 1; padding: 12px; border: 0; background: none; font: inherit; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; }
+  .tablist button[aria-selected=true] { color: var(--primary); border-bottom-color: var(--primary); }
+  .tabpanel { padding: 20px; } .tabpanel[hidden] { display: none; }
+
+  /* tooltip */
+  .tip { position: relative; } .tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(4px);
+         background: var(--ink); color: var(--bg); font-size: .78rem; padding: 6px 10px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: all .15s; }
+  .tip:hover::after { opacity: 1; transform: translateX(-50%); }
+
+  /* modal */
+  dialog { border: 0; border-radius: var(--radius-lg); padding: 26px; width: min(420px, 90vw); background: var(--surface); color: var(--ink); box-shadow: 0 30px 60px -20px rgba(0,0,0,.45); }
+  dialog::backdrop { background: rgba(15,23,42,.5); backdrop-filter: blur(3px); }
+  dialog[open] { animation: in .2s ease-out; } @keyframes in { from { transform: scale(.95); opacity: 0; } }
+  dialog p { color: var(--muted); margin: 8px 0 22px; }
+</style>
+</head>
+<body>
+<h1>Component kit</h1>
+<p class="lead">Reusable, themeable pieces built on CSS variables. Supports dark mode automatically.</p>
+
+<section><h2>Buttons</h2>
+  <div class="row">
+    <button class="btn">Primary</button><button class="btn secondary">Secondary</button><button class="btn ghost">Ghost</button>
+    <button class="btn danger">Delete</button><button class="btn pill">Pill</button><button class="btn sm secondary">Small</button>
+    <button class="btn tip" data-tip="I'm a tooltip">Hover me</button>
+  </div>
+</section>
+
+<section><h2>Badges &amp; toggles</h2>
+  <div class="row">
+    <span class="badge" style="--c:var(--success)">Active</span><span class="badge" style="--c:var(--warning)">Pending</span>
+    <span class="badge" style="--c:var(--danger)">Failed</span><span class="badge" style="--c:var(--primary)">New</span>
+    <label class="switch"><input type="checkbox" checked><span></span></label>
+    <label class="switch"><input type="checkbox"><span></span></label>
+  </div>
+</section>
+
+<section><h2>Cards</h2>
+  <div class="cards">
+    <div class="card"><h3>Fast by default</h3><p>Lightweight CSS with no frameworks or build step.</p></div>
+    <div class="card"><h3>Accessible</h3><p>Focus rings, ARIA roles and reduced-motion friendly.</p></div>
+    <div class="card"><h3>Themeable</h3><p>Change a handful of tokens to restyle everything.</p></div>
+  </div>
+</section>
+
+<section><h2>Alerts</h2>
+  <div style="display:grid;gap:10px;max-width:560px">
+    <div class="alert" style="--c:var(--success)"><b>Saved.</b> Your changes are live.</div>
+    <div class="alert" style="--c:var(--warning)"><b>Heads up.</b> Your trial ends in 3 days.</div>
+    <div class="alert" style="--c:var(--danger)"><b>Error.</b> We couldn't reach the server.</div>
+  </div>
+</section>
+
+<section><h2>Tabs</h2>
+  <div class="tabs">
+    <div class="tablist" role="tablist">
+      <button role="tab" aria-selected="true" aria-controls="t1">Overview</button>
+      <button role="tab" aria-selected="false" aria-controls="t2">Activity</button>
+      <button role="tab" aria-selected="false" aria-controls="t3">Settings</button>
+    </div>
+    <div class="tabpanel" id="t1" role="tabpanel">Everything at a glance: usage, limits and health.</div>
+    <div class="tabpanel" id="t2" role="tabpanel" hidden>12 deploys and 3 new members this week.</div>
+    <div class="tabpanel" id="t3" role="tabpanel" hidden>Manage notifications, billing and API keys.</div>
+  </div>
+</section>
+
+<section><h2>Modal</h2>
+  <button class="btn" id="open">Open modal</button>
+  <dialog id="dlg">
+    <h3>Delete project?</h3>
+    <p>This permanently removes the project and its deployments. This can't be undone.</p>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn secondary" id="cancel">Cancel</button><button class="btn danger" id="confirm">Delete</button>
+    </div>
+  </dialog>
+</section>
+
+<script>
+  // tabs
+  document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('[role=tab]').forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', on);
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }));
+  // modal (native <dialog> handles focus and Escape)
+  const dlg = document.getElementById('dlg');
+  document.getElementById('open').onclick = () => dlg.showModal();
+  document.getElementById('cancel').onclick = () => dlg.close();
+  document.getElementById('confirm').onclick = () => dlg.close();
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });  // click backdrop to close
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dropdown menu - Neon Cyberpunk</title>
+<style>
+/* Dropdown menu | style: Neon Cyberpunk | CSS component: dropdown menu
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0a0014; --surface: #14002a; --text: #f5f3ff; --muted: #c4b5fd;
+  --primary: #ff2bd6; --on-primary: #0a0014; --accent: #00f0ff; --border: rgba(0,240,255,.45);
+  --radius: 4px; --shadow: 0 0 18px rgba(255,43,214,.45), inset 0 0 12px rgba(0,240,255,.15);
+  --font: ui-monospace, 'Cascadia Code', Consolas, monospace; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0a0014; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.menu-wrap { position: relative; padding-bottom: 180px; }
+.trigger { padding: 11px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 600; cursor: pointer; }
+.menu { position: absolute; top: calc(100% - 170px); left: 0; min-width: 210px; padding: 6px; display: grid; animation: drop .18s ease; }
+.menu a { padding: 10px 12px; border-radius: calc(var(--radius) * .6); color: var(--text); text-decoration: none; display: flex; justify-content: space-between; }
+.menu a:hover { background: color-mix(in srgb, var(--primary) 10%, transparent); color: var(--primary); }
+.menu kbd { font-family: inherit; color: var(--muted); font-size: .8rem; }
+.menu hr { border: 0; border-top: 1px solid var(--border); margin: 6px 0; }
+@keyframes drop { from { opacity: 0; transform: translateY(-6px); } }
+</style>
+</head>
+<body>
+<div class="menu-wrap">
+  <button class="trigger" aria-haspopup="menu" aria-expanded="true">Options &#9662;</button>
+  <div class="menu surface" role="menu"><a href="#">Edit <kbd>Ctrl+E</kbd></a><a href="#">Duplicate <kbd>Ctrl+D</kbd></a><hr><a href="#" style="color:#dc2626">Delete</a></div>
+</div>
+</body>
+</html>

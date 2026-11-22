@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maya Lin - Designer</title>
+<style>
+  :root { --bg: #fdf6f0; --ink: #3d3a4b; --muted: #7a7590; --pink: #f9c6d3; --mint: #bdeadf; --lav: #d9ccff; --sun: #ffe3a3;
+          --radius: 24px; --font: "Segoe UI Rounded", "Nunito", system-ui, -apple-system, sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--ink); line-height: 1.6; }
+  .wrap { width: min(1040px, 90vw); margin: 0 auto; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 26px 0; }
+  nav b { font-size: 1.2rem; }
+  nav a { color: var(--ink); text-decoration: none; margin-left: 22px; font-weight: 600; }
+
+  .hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; padding: 50px 0 80px; }
+  .hello { display: inline-block; background: var(--mint); padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: .9rem; }
+  h1 { font-size: clamp(2.3rem, 5.5vw, 3.8rem); line-height: 1.1; margin: 18px 0; letter-spacing: -.02em; }
+  h1 mark { background: linear-gradient(transparent 55%, var(--pink) 55%); color: inherit; padding: 0 4px; }
+  .hero p { color: var(--muted); font-size: 1.1rem; max-width: 46ch; }
+  .btns { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .btn { padding: 13px 24px; border-radius: 999px; font-weight: 700; text-decoration: none; transition: transform .2s; }
+  .btn:hover { transform: translateY(-3px) rotate(-1deg); }
+  .btn.dark { background: var(--ink); color: #fff; }
+  .btn.light { background: #fff; color: var(--ink); box-shadow: 0 6px 20px -8px rgba(61,58,75,.3); }
+  .portrait { aspect-ratio: 1; border-radius: 40% 60% 55% 45% / 50% 40% 60% 50%; background: linear-gradient(135deg, var(--lav), var(--pink));
+              display: grid; place-items: center; font-size: 5rem; box-shadow: 0 30px 60px -30px rgba(61,58,75,.4); animation: morph 10s ease-in-out infinite; }
+  @keyframes morph { 50% { border-radius: 60% 40% 45% 55% / 40% 60% 40% 60%; } }
+
+  h2 { font-size: 2rem; margin-bottom: 26px; letter-spacing: -.01em; }
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-bottom: 80px; }
+  .project { background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 10px 30px -18px rgba(61,58,75,.35); transition: transform .3s, box-shadow .3s; }
+  .project:hover { transform: translateY(-8px); box-shadow: 0 24px 40px -20px rgba(61,58,75,.45); }
+  .thumb { height: 170px; display: grid; place-items: center; font-size: 3rem; }
+  .project div.info { padding: 20px 22px 24px; }
+  .project h3 { font-size: 1.15rem; }
+  .project p { color: var(--muted); font-size: .95rem; margin: 6px 0 12px; }
+  .tags span { display: inline-block; font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--bg); margin: 0 4px 4px 0; }
+
+  .skills { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 80px; }
+  .skills span { padding: 10px 18px; border-radius: 999px; font-weight: 700; }
+
+  .contact { background: #fff; border-radius: 32px; padding: 44px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 60px; }
+  .contact input, .contact textarea { width: 100%; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--bg); background: var(--bg);
+                                      font: inherit; color: var(--ink); margin-bottom: 12px; outline: none; transition: border-color .2s; }
+  .contact input:focus, .contact textarea:focus { border-color: var(--lav); }
+  .contact button { border: 0; cursor: pointer; font: inherit; }
+  footer { text-align: center; color: var(--muted); padding-bottom: 40px; }
+  @media (max-width: 760px) { .hero, .contact { grid-template-columns: 1fr; } .portrait { max-width: 260px; margin: 0 auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><b>maya.</b><div><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></div></nav>
+
+  <header class="hero">
+    <div>
+      <span class="hello">&#128075; Hi, I'm Maya</span>
+      <h1>I design <mark>friendly</mark> products people love to use.</h1>
+      <p>Product designer based in Lisbon. I turn messy problems into calm, joyful interfaces for startups and studios.</p>
+      <div class="btns"><a class="btn dark" href="#work">See my work</a><a class="btn light" href="#contact">Say hello</a></div>
+    </div>
+    <div class="portrait" aria-hidden="true">&#127912;</div>
+  </header>
+
+  <section id="work">
+    <h2>Selected work</h2>
+    <div class="projects">
+      <article class="project"><div class="thumb" style="background:var(--pink)">&#127793;</div>
+        <div class="info"><h3>Sprout</h3><p>A plant-care app that makes watering reminders feel like a game.</p><div class="tags"><span>Mobile</span><span>Branding</span></div></div></article>
+      <article class="project"><div class="thumb" style="background:var(--mint)">&#9749;</div>
+        <div class="info"><h3>Brewly</h3><p>Ordering flow for a chain of 40 coffee shops, 30% faster checkout.</p><div class="tags"><span>Web</span><span>UX research</span></div></div></article>
+      <article class="project"><div class="thumb" style="background:var(--lav)">&#127911;</div>
+        <div class="info"><h3>Tune In</h3><p>Podcast discovery with mood-based playlists and soft gradients.</p><div class="tags"><span>Product</span><span>Design system</span></div></div></article>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>Things I'm good at</h2>
+    <div class="skills">
+      <span style="background:var(--pink)">UI design</span><span style="background:var(--mint)">Prototyping</span>
+      <span style="background:var(--lav)">Design systems</span><span style="background:var(--sun)">User research</span>
+      <span style="background:var(--pink)">Illustration</span><span style="background:var(--mint)">Motion</span>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div><h2>Let's make something lovely</h2><p style="color:var(--muted)">Have a project in mind? Drop me a line and I'll get back within a day.</p></div>
+    <form onsubmit="event.preventDefault(); this.querySelector('button').textContent = 'Sent! Thank you';">
+      <input placeholder="Your name" required><input type="email" placeholder="Email" required>
+      <textarea rows="4" placeholder="Tell me about your project"></textarea>
+      <button class="btn dark" type="submit">Send message</button>
+    </form>
+  </section>
+  <footer>Made with &#10084; and too much tea.</footer>
+</div>
+</body>
+</html>

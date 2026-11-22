@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Footer - Luxury</title>
+<style>
+/* Footer | style: Luxury | CSS component: footer
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0c0c0c; --surface: #141414; --text: #f5f1e6; --muted: #a89f8a;
+  --primary: #c9a227; --on-primary: #0c0c0c; --accent: #e8d48b; --border: rgba(201,162,39,.35);
+  --radius: 2px; --shadow: 0 20px 50px -25px rgba(201,162,39,.35);
+  --font: 'Helvetica Neue', Arial, sans-serif; --head: Georgia, 'Times New Roman', serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0c0c0c; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.footer { width: min(1000px, 100%); padding: 36px; display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 24px; }
+.footer h4 { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
+.footer a { display: block; color: var(--muted); text-decoration: none; margin: 6px 0; transition: color .2s; }
+.footer a:hover { color: var(--primary); }
+.footer p { color: var(--muted); font-size: .92rem; margin-top: 8px; max-width: 32ch; }
+.bottom { grid-column: 1 / -1; border-top: 1px solid var(--border); padding-top: 18px; color: var(--muted); font-size: .85rem; }
+@media (max-width: 700px) { .footer { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<footer class="footer surface">
+  <div><b>Brand</b><p>Tools that help small teams do big things.</p></div>
+  <div><h4>Product</h4><a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a></div>
+  <div><h4>Company</h4><a href="#">About</a><a href="#">Careers</a><a href="#">Blog</a></div>
+  <div><h4>Legal</h4><a href="#">Privacy</a><a href="#">Terms</a></div>
+  <div class="bottom">&copy; 2026 Brand Inc. All rights reserved.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tooltips - Nature</title>
+<style>
+/* Tooltips | style: Nature | CSS component: tooltips
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #f4efe6; --surface: #fffaf1; --text: #2b2a26; --muted: #6d6a5f;
+  --primary: #2f5d50; --on-primary: #ffffff; --accent: #c8663b; --border: #e3d5b8;
+  --radius: 18px; --shadow: 0 16px 30px -22px rgba(47,93,80,.5);
+  --font: 'Segoe UI', system-ui, sans-serif; --head: Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #f4efe6; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.row { display: flex; gap: 40px; padding: 60px; }
+.tip { position: relative; padding: 10px 18px; border-radius: var(--radius); background: var(--primary); color: var(--on-primary); font-weight: 600; cursor: help; }
+.tip::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translate(-50%, 6px);
+              background: var(--text); color: var(--surface); padding: 6px 10px; border-radius: 6px; font-size: .8rem; white-space: nowrap;
+              opacity: 0; pointer-events: none; transition: all .18s ease; }
+.tip::before { content: ""; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); border: 6px solid transparent;
+               border-top-color: var(--text); opacity: 0; transition: opacity .18s; }
+.tip:hover::after { opacity: 1; transform: translate(-50%, 0); }
+.tip:hover::before { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="row">
+  <span class="tip" data-tip="Saves your work">Save</span>
+  <span class="tip" data-tip="Shares a link">Share</span>
+</div>
+</body>
+</html>

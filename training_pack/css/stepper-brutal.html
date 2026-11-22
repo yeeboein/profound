@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step progress (stepper) - Neo-Brutalism</title>
+<style>
+/* Step progress (stepper) | style: Neo-Brutalism | CSS component: step progress (stepper)
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #fffdf5; --surface: #ffffff; --text: #000000; --muted: #333333;
+  --primary: #ffde59; --on-primary: #000000; --accent: #5ce1e6; --border: #000000;
+  --radius: 0px; --shadow: 6px 6px 0 #000;
+  --font: 'Arial Black', 'Segoe UI Black', system-ui, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #fffdf5; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); border-width: 3px !important; }
+
+.stepper { width: min(640px, 100%); padding: 28px; display: flex; justify-content: space-between; position: relative; }
+.stepper::before { content: ""; position: absolute; top: 47px; left: 60px; right: 60px; height: 3px; background: var(--border); }
+.s { text-align: center; position: relative; flex: 1; }
+.s b { width: 40px; height: 40px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 3px solid var(--border); color: var(--muted); }
+.s.done b { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.s.now b { border-color: var(--primary); color: var(--primary); }
+.s span { font-size: .85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="stepper surface">
+  <div class="s done"><b>&#10003;</b><span>Account</span></div><div class="s done"><b>&#10003;</b><span>Details</span></div>
+  <div class="s now"><b>3</b><span>Payment</span></div><div class="s"><b>4</b><span>Done</span></div>
+</div>
+</body>
+</html>

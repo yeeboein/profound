@@ -1,0 +1,38 @@
+{
+  "name": "profound",
+  "displayName": "Profound",
+  "description": "Offline AI coding assistant powered by the Profound desktop app running on your PC.",
+  "version": "1.0.0",
+  "publisher": "profound",
+  "license": "MIT",
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Programming Languages", "Other"],
+  "icon": "icon.png",
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [{ "id": "profound", "title": "Profound", "icon": "icon-mono.svg" }]
+    },
+    "views": {
+      "profound": [{ "type": "webview", "id": "profound.chat", "name": "Chat" }]
+    },
+    "commands": [
+      { "command": "profound.ask", "title": "Profound: Open Chat" },
+      { "command": "profound.explain", "title": "Profound: Explain Selection" },
+      { "command": "profound.fix", "title": "Profound: Fix Selection" },
+      { "command": "profound.edit", "title": "Profound: Edit Selection..." }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "profound.explain", "group": "profound@1" },
+        { "command": "profound.fix", "group": "profound@2" },
+        { "command": "profound.edit", "group": "profound@3" }
+      ]
+    },
+    "keybindings": [
+      { "command": "profound.ask", "key": "ctrl+alt+p" },
+      { "command": "profound.edit", "key": "ctrl+alt+e", "when": "editorTextFocus" }
+    ]
+  }
+}

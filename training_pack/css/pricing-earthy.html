@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing cards - Nature</title>
+<style>
+/* Pricing cards | style: Nature | CSS component: pricing cards
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #f4efe6; --surface: #fffaf1; --text: #2b2a26; --muted: #6d6a5f;
+  --primary: #2f5d50; --on-primary: #ffffff; --accent: #c8663b; --border: #e3d5b8;
+  --radius: 18px; --shadow: 0 16px 30px -22px rgba(47,93,80,.5);
+  --font: 'Segoe UI', system-ui, sans-serif; --head: Georgia, serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #f4efe6; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; width: min(980px, 100%); align-items: stretch; }
+.plan { padding: 28px; display: flex; flex-direction: column; position: relative; }
+.plan.best { border: 2px solid var(--primary); transform: scale(1.03); }
+.tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--on-primary);
+       font-size: .75rem; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+.price { font-size: 2.4rem; font-weight: 800; margin: 10px 0; }
+.price small { font-size: .9rem; color: var(--muted); font-weight: 500; }
+.plan ul { list-style: none; padding: 0; margin: 16px 0 24px; display: grid; gap: 8px; flex: 1; color: var(--muted); }
+.plan li::before { content: "\2713"; color: var(--primary); margin-right: 8px; font-weight: 800; }
+.plan a { text-align: center; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); color: var(--text); text-decoration: none; font-weight: 600; }
+.plan.best a { background: var(--primary); color: var(--on-primary); border-color: var(--primary); }
+</style>
+</head>
+<body>
+<section class="plans">
+  <div class="plan surface"><h3>Starter</h3><div class="price">$0<small>/mo</small></div><ul><li>1 project</li><li>Community help</li></ul><a href="#">Choose</a></div>
+  <div class="plan surface best"><span class="tag">Popular</span><h3>Pro</h3><div class="price">$19<small>/mo</small></div><ul><li>Unlimited projects</li><li>Priority support</li><li>Custom domain</li></ul><a href="#">Choose</a></div>
+  <div class="plan surface"><h3>Team</h3><div class="price">$49<small>/mo</small></div><ul><li>Everything in Pro</li><li>5 seats</li><li>SSO</li></ul><a href="#">Choose</a></div>
+</section>
+</body>
+</html>

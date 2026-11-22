@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accordion / FAQ - Clean Minimal</title>
+<style>
+/* Accordion / FAQ | style: Clean Minimal | CSS component: accordion / faq
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #ffffff; --surface: #ffffff; --text: #111827; --muted: #6b7280;
+  --primary: #2563eb; --on-primary: #ffffff; --accent: #0ea5e9; --border: #e5e7eb;
+  --radius: 8px; --shadow: 0 1px 2px rgba(17,24,39,.06);
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #ffffff; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.faq { width: min(620px, 100%); padding: 8px 24px; }
+details { border-bottom: 1px solid var(--border); padding: 18px 0; }
+details:last-child { border: 0; }
+summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; font-weight: 700; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--primary); font-size: 1.4rem; line-height: 1; transition: transform .25s; }
+details[open] summary::after { transform: rotate(45deg); }
+details p { color: var(--muted); margin-top: 10px; animation: open .25s ease; }
+@keyframes open { from { opacity: 0; transform: translateY(-4px); } }
+</style>
+</head>
+<body>
+<section class="faq surface">
+  <details open><summary>Can I cancel anytime?</summary><p>Yes, cancel in one click from your settings.</p></details>
+  <details><summary>Is there a free trial?</summary><p>Every plan starts with 14 days free.</p></details>
+  <details><summary>Do you offer refunds?</summary><p>Full refund within 30 days, no questions asked.</p></details>
+</section>
+</body>
+</html>

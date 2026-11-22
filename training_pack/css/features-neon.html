@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature list with image - Neon Cyberpunk</title>
+<style>
+/* Feature list with image | style: Neon Cyberpunk | CSS component: feature list with image
+   Layout rule: all CSS here at the top, the HTML below. */
+:root {
+  --bg: #0a0014; --surface: #14002a; --text: #f5f3ff; --muted: #c4b5fd;
+  --primary: #ff2bd6; --on-primary: #0a0014; --accent: #00f0ff; --border: rgba(0,240,255,.45);
+  --radius: 4px; --shadow: 0 0 18px rgba(255,43,214,.45), inset 0 0 12px rgba(0,240,255,.15);
+  --font: ui-monospace, 'Cascadia Code', Consolas, monospace; --head: inherit;
+}
+* { box-sizing: border-box; margin: 0; }
+body { font-family: var(--font); background: #0a0014; color: var(--text); line-height: 1.6; min-height: 100vh;
+       display: grid; place-items: center; padding: 40px 20px; }
+h1, h2, h3 { font-family: var(--head); line-height: 1.2; }
+.surface { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);  }
+
+.split { width: min(980px, 100%); display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.split h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 14px; }
+.split p { color: var(--muted); margin-bottom: 20px; }
+.split ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+.split li { display: flex; gap: 12px; }
+.split li b { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: var(--on-primary); display: grid; place-items: center; font-size: .8rem; }
+.art { aspect-ratio: 4 / 3; border-radius: var(--radius); background: radial-gradient(circle at 30% 30%, var(--accent), transparent 55%), radial-gradient(circle at 70% 70%, var(--primary), transparent 55%), var(--surface); box-shadow: var(--shadow); }
+@media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<section class="split">
+  <div><h2>Work smarter, not harder</h2><p>Automate the boring parts and focus on what matters.</p>
+    <ul><li><b>&#10003;</b>Smart templates for every project</li><li><b>&#10003;</b>Real-time collaboration</li><li><b>&#10003;</b>Works offline</li></ul></div>
+  <div class="art" role="img" aria-label="Abstract illustration"></div>
+</section>
+</body>
+</html>
