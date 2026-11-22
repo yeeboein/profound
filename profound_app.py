@@ -2190,6 +2190,8 @@ class App:
                 self.root.after(1500, (lambda o=out: self.codetest(o)) if flag == "--codetest" else (lambda o=out: self.previewtest(o)))
         if "--qbtest" in sys.argv:  # hidden: runs a Quick build on the smallest model and checks the page
             self.root.after(1500, lambda: self.qbtest(sys.argv[sys.argv.index("--qbtest") + 1]))
+        if "--readmetest" in sys.argv:  # hidden: screenshots for the README
+            self.root.after(1500, lambda: self.readmetest(sys.argv[sys.argv.index("--readmetest") + 1]))
         if "--smoketest" in sys.argv:  # hidden: used by the GitHub builds to check the built app starts on each system
             self.root.after(2500, lambda: self.smoketest(sys.argv[sys.argv.index("--smoketest") + 1]))
         if "--styletest" in sys.argv:  # hidden: "make a page" then "now style it" must edit the same file
@@ -3899,7 +3901,7 @@ class App:
                 "- One `<style>` block at the top of the page with a full stylesheet; your HTML and text are unchanged\n"
                 "- Header as a hero, sections as cards, lists as hover cards, plus buttons, links, forms, tables and a footer\n"
                 "- Colour variables in `:root` (easy to tweak) and a phone-size layout\n"
-                "- Want another look? Say *make it glass*, *neon*, *pastel*, *luxury*, *retro*... or add a colour, like *make it blue*")
+                "- Want another look? Say \"make it glass\", \"neon\", \"pastel\", \"luxury\" or \"retro\", or add a colour, like \"make it blue\"")
         self.md_text(body, expl)
         chip = Card(body, fill=PANEL2, radius=12, padx=12, pady=8)
         chip.pack(fill="x", pady=5)
@@ -4721,6 +4723,85 @@ class App:
                 pass
             self.on_close(force=True)
         self.root.after(500, wait)
+
+    def readmetest(self, out_dir, t0=None):
+        t0 = t0 or time.time()
+        if not self.ready and time.time() - t0 < 90:
+            return self.root.after(500, lambda: self.readmetest(out_dir, t0))
+        self.root.geometry("1440x880+40+30")
+        self.set_mode("ask", save=False)
+        page = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bean There Coffee</title>
+</head>
+<body>
+<nav><a href="#">Home</a><a href="#menu">Menu</a><a href="#visit">Visit</a></nav>
+<header>
+  <h1>Bean There <span>Coffee</span></h1>
+  <p>Small-batch roasts, flaky pastries and a cosy corner to stay a while.</p>
+  <button>See the menu</button>
+</header>
+<main>
+  <section id="menu">
+    <h2>Today's menu</h2>
+    <ul>
+      <li>Espresso</li>
+      <li>Oat flat white</li>
+      <li>Cold brew</li>
+      <li>Cardamom bun</li>
+    </ul>
+  </section>
+  <section id="visit">
+    <h2>Visit us</h2>
+    <p>Open every day from 7am. Free Wi-Fi, comfy chairs and the best window seats in town.</p>
+  </section>
+</main>
+<footer>Made with love and lots of coffee</footer>
+</body>
+</html>"""
+        q1 = "Make a simple web page for my coffee shop"
+        self.history.append({"role": "user", "content": q1})
+        self.add_user_msg(q1)
+        row = self.chat_row()
+        body = self.ai_header(row)
+        card = self.snippets.add_live("html", "index.html", q1)
+        self.snippets.live_append(card, page)
+        self.snippets.live_finish(card, "ask")
+        self.md_text(body, "Here's a page for **Bean There Coffee**:\n- A header with your name, a short welcome and a button\n"
+                           "- A menu section and a visit section\n- A footer, all in one HTML file")
+        self.history.append({"role": "assistant", "content": "page\n```html\n" + page + "\n```"})
+        self.chat_sf.wheel_tree(row)
+        self.quick_restyle("now make it neon", True, "index.html", page)
+
+        def grab(name):
+            try:
+                from PIL import ImageGrab
+                self.root.attributes("-topmost", True)
+                self.root.update()
+                hwnd = U32.GetParent(self.root.winfo_id()) or self.root.winfo_id()
+                r = RECT()
+                try:
+                    ctypes.windll.dwmapi.DwmGetWindowAttribute(wt.HWND(hwnd), 9, ctypes.byref(r), ctypes.sizeof(r))
+                except Exception:
+                    U32.GetWindowRect(hwnd, ctypes.byref(r))
+                ImageGrab.grab(bbox=(r.left, r.top, r.right, r.bottom), all_screens=True).save(out_dir + "-" + name)
+            except Exception as e:
+                log_error("readme shot: " + repr(e))
+
+        steps = [(2500, lambda: (self.snippets.focus_card(self.snippets.cards[-1]), self.show_latest())),
+                 (1500, lambda: grab("code.png")),
+                 (300, lambda: self.select_tab(self.preview_tab)),
+                 (5000, lambda: grab("preview.png")),
+                 (300, lambda: self.on_close(force=True))]
+
+        def run(i=0):
+            if i < len(steps):
+                ms, fn = steps[i]
+                self.root.after(ms, lambda: (fn(), run(i + 1)))
+        run()
 
     def smoketest(self, out):
         """Opens the main window, the Code tab, the Train library and a restyled page, then writes a JSON report."""
